@@ -50,9 +50,9 @@ jobs:
       - name: Set Package Version
         run: |
           cat << EOF > version.go
-          package opslevel_common
+          package opslevel_jq_parser
 
-          const clientVersion = "${{ steps.version.outputs.RELEASE_VERSION }}"
+          const ReleaseVersion = "${{ steps.version.outputs.RELEASE_VERSION }}"
           EOF
       - name: Ensure Changelog
         run: |
