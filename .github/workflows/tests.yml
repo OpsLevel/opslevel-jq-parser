@@ -27,6 +27,8 @@ jobs:
           docker rm libjq
       - name: Run Tests
         run: |-
+          ls -al
+          ls -al ./libjq
           CGO_ENABLED=1 CGO_CFLAGS="-I./libjq/include" CGO_LDFLAGS="-L./libjq/lib" go test -race -coverprofile=coverage.txt -covermode=atomic -v ./...
       - name: Upload Coverage
         run: |-
