@@ -24,10 +24,10 @@ jobs:
         run: |-
           docker run --name "libjq" -d flant/jq:b6be13d5-glibc
           docker cp libjq:/libjq ./libjq 
-          docker rm libjq 
+          docker rm libjq
       - name: Run Tests
         run: |-
-          go test -race -coverprofile=coverage.txt -covermode=atomic -v ./...
+          CGO_ENABLED=1 CGO_CFLAGS="-I./libjq/include" CGO_LDFLAGS="-L./libjq/lib" go test -race -coverprofile=coverage.txt -covermode=atomic -v ./...
       - name: Upload Coverage
         run: |-
           bash <(curl -s https://codecov.io/bash)
