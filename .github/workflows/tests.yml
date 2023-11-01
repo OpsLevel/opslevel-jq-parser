@@ -22,7 +22,9 @@ jobs:
           go-version-file: go.mod
       - name: Install LibJQ
         run: |-
-          sudo apt-get install -y libjq-dev
+          docker run --name "libjq" -d flant/jq:b6be13d5-glibc
+          docker cp libjq:/libjq ./libjq 
+          docker rm libjq 
       - name: Run Tests
         run: |-
           go test -race -coverprofile=coverage.txt -covermode=atomic -v ./...
