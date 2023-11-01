@@ -20,6 +20,14 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
+      - name: Install LibJQ
+        run: |-
+          docker run --name "libjq" -d flant/jq:b6be13d5-glibc
+          docker cp libjq:/libjq ./libjq 
+          docker rm libjq
+          echo CGO_ENABLED=1 >> $GITHUB_ENV
+          echo CGO_CFLAGS="-I$(pwd)/libjq/include" >> $GITHUB_ENV
+          echo CGO_LDFLAGS="-L$(pwd)/libjq/lib" >> $GITHUB_ENV
       - name: Run Tests
         run: |-
           go test -race -coverprofile=coverage.txt -covermode=atomic -v ./...
