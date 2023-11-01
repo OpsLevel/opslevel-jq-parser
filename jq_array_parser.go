@@ -25,7 +25,7 @@ func (p *JQArrayParser) Run(data string) ([]string, error) {
 	for _, program := range p.programs {
 		response, err := program.Run(data)
 		if err != nil {
-			log.Warn().Msgf("unable to parse alias from expression: %s", program.program.Program)
+			log.Warn().Err(err).Msgf("jq execution error from expression: %s", program.program.Program)
 			continue
 		}
 		if response == "" {
