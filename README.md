@@ -6,7 +6,7 @@ This library leverages https://github.com/flant/libjq-go which are CGO bindings 
 #  Installation
 
 ```bash
-go get github.com/opslevel/opslevel-jq-parser
+go get github.com/opslevel/opslevel-jq-parser/v2023
 ```
 
 Then wherever you compile or test that project you'll need to add
@@ -17,7 +17,7 @@ docker cp libjq:/libjq ./libjq
 docker rm libjq
 export CGO_ENABLED=1
 export CGO_CFLAGS="-I$(pwd)/libjq/include"
-export  CGO_LDFLAGS="-L$(pwd)/libjq/lib"
+export CGO_LDFLAGS="-L$(pwd)/libjq/lib"
 ```
 
 Here is a nice stanza you can put into your github actions workflow files
