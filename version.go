@@ -1,3 +1,3 @@
 package opslevel_jq_parser
 
-const ReleaseVersion = "v2023.11.2"
+const ReleaseVersion = "v2023.12.11"
