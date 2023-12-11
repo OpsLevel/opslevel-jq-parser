@@ -67,10 +67,10 @@ func (p *JQServiceParser) Run(json string) (*ServiceRegistration, error) {
 	if err != nil {
 		return nil, err
 	}
-	//System, err := p.system.Run(json)
-	//if err != nil {
-	//	return nil, err
-	//}
+	System, err := p.system.Run(json)
+	if err != nil {
+		return nil, err
+	}
 	Aliases, err := p.aliases.Run(json)
 	if err != nil {
 		return nil, err
@@ -88,15 +88,15 @@ func (p *JQServiceParser) Run(json string) (*ServiceRegistration, error) {
 		return nil, err
 	}
 	return &ServiceRegistration{
-		Name:        name,
-		Description: description,
-		Owner:       Owner,
-		Lifecycle:   Lifecycle,
-		Tier:        Tier,
-		Product:     Product,
-		Language:    Language,
-		Framework:   Framework,
-		//System:       System,
+		Name:         name,
+		Description:  description,
+		Owner:        Owner,
+		Lifecycle:    Lifecycle,
+		Tier:         Tier,
+		Product:      Product,
+		Language:     Language,
+		Framework:    Framework,
+		System:       System,
 		Aliases:      Aliases,
 		TagCreates:   TagCreates,
 		TagAssigns:   TagAssigns,

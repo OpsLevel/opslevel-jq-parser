@@ -83,6 +83,7 @@ type ServiceRegistration struct {
 	Product      string                                  `json:",omitempty"`
 	Language     string                                  `json:",omitempty"`
 	Framework    string                                  `json:",omitempty"`
+	System       string                                  `json:",omitempty"`
 	Aliases      []string                                `json:",omitempty"`
 	TagAssigns   []opslevel.TagInput                     `json:",omitempty"`
 	TagCreates   []opslevel.TagInput                     `json:",omitempty"`
