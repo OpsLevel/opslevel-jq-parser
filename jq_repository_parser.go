@@ -2,9 +2,10 @@ package opslevel_jq_parser
 
 import (
 	"encoding/json"
+	"strings"
+
 	"github.com/opslevel/opslevel-go/v2023"
 	"github.com/rs/zerolog/log"
-	"strings"
 )
 
 type RepositoryDTO struct {
@@ -39,7 +40,7 @@ func (p *JQRepositoryParser) Run(data string) ([]opslevel.ServiceRepositoryCreat
 	output := make([]opslevel.ServiceRepositoryCreateInput, 0, len(p.programs))
 	for _, program := range p.programs {
 		response, err := program.Run(data)
-		//log.Warn().Msgf("expression: %s\nresponse: %s", program.program.Program, response)
+		// log.Warn().Msgf("expression: %s\nresponse: %s", program.program.Program, response)
 		if err != nil {
 			log.Warn().Msgf("unable to parse alias from expression: %s", program.program.Program)
 			return nil, err

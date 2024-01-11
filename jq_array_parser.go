@@ -2,8 +2,9 @@ package opslevel_jq_parser
 
 import (
 	"encoding/json"
-	"github.com/rs/zerolog/log"
 	"strings"
+
+	"github.com/rs/zerolog/log"
 )
 
 type JQArrayParser struct {

@@ -2,8 +2,9 @@ package opslevel_jq_parser
 
 import (
 	"encoding/json"
-	"github.com/opslevel/opslevel-go/v2023"
 	"strings"
+
+	"github.com/opslevel/opslevel-go/v2023"
 )
 
 type JQTagsParser struct {

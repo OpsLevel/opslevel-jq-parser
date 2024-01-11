@@ -26,7 +26,7 @@ func NewJQServiceParser(cfg ServiceRegistrationConfig) *JQServiceParser {
 		product:      NewJQFieldParser(cfg.Product),
 		language:     NewJQFieldParser(cfg.Language),
 		framework:    NewJQFieldParser(cfg.Framework),
-		system:       NewJQFieldParser(""), //cfg.System),
+		system:       NewJQFieldParser(""), // cfg.System),
 		aliases:      NewJQArrayParser(cfg.Aliases),
 		tags:         NewJQTagsParser(cfg.Tags),
 		tools:        NewJQToolsParser(cfg.Tools),
