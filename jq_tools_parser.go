@@ -2,9 +2,10 @@ package opslevel_jq_parser
 
 import (
 	"encoding/json"
+	"strings"
+
 	"github.com/opslevel/opslevel-go/v2023"
 	"github.com/rs/zerolog/log"
-	"strings"
 )
 
 type JQToolsParser struct {
@@ -36,16 +37,14 @@ func (p *JQToolsParser) Run(data string) ([]opslevel.ToolCreateInput, error) {
 		if strings.HasPrefix(response, "[") && strings.HasSuffix(response, "]") {
 			var tools []opslevel.ToolCreateInput
 			if err := json.Unmarshal([]byte(response), &tools); err != nil {
-				// TODO: log error
-				panic(err)
+				log.Err(err).Msgf("unable to parse expression: %s", program.program.Program)
 				continue
 			}
 			output = append(output, tools...)
 		} else {
 			var tool opslevel.ToolCreateInput
 			if err := json.Unmarshal([]byte(response), &tool); err != nil {
-				// TODO: log error
-				panic("here")
+				log.Err(err).Msgf("unable to parse expression: %s", program.program.Program)
 				continue
 			}
 			output = append(output, tool)

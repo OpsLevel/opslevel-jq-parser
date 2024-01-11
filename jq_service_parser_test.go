@@ -1,10 +1,11 @@
 package opslevel_jq_parser_test
 
 import (
+	"testing"
+
 	"github.com/opslevel/opslevel-go/v2023"
 	opslevel_jq_parser "github.com/opslevel/opslevel-jq-parser/v2023"
 	"github.com/rocktavious/autopilot/v2023"
-	"testing"
 )
 
 var k8sResource = `{
@@ -252,7 +253,7 @@ func TestJQServiceParserSimpleConfig(t *testing.T) {
 	autopilot.Equals(t, "", service.Product)
 	autopilot.Equals(t, "", service.Language)
 	autopilot.Equals(t, "", service.Framework)
-	//autopilot.Equals(t, "", service.System)
+	// autopilot.Equals(t, "", service.System)
 	autopilot.Equals(t, 1, len(service.Aliases))
 	autopilot.Equals(t, "k8s:web-self-hosted", service.Aliases[0])
 	autopilot.Equals(t, 1, len(service.TagCreates))
@@ -285,7 +286,7 @@ func TestJQServiceParserSampleConfig(t *testing.T) {
 	autopilot.Equals(t, "jklabs", service.Product)
 	autopilot.Equals(t, "ruby", service.Language)
 	autopilot.Equals(t, "rails", service.Framework)
-	//autopilot.Equals(t, "monolith", service.System)
+	// autopilot.Equals(t, "monolith", service.System)
 	autopilot.Equals(t, "k8s:web-self-hosted", service.Aliases[0])
 	autopilot.Equals(t, "self-hosted-web", service.Aliases[1])
 	autopilot.Equals(t, 1, len(service.TagCreates))

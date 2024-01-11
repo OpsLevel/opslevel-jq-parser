@@ -2,6 +2,7 @@ package opslevel_jq_parser
 
 import (
 	"fmt"
+
 	"github.com/flant/libjq-go"
 	"github.com/flant/libjq-go/pkg/jq"
 )
