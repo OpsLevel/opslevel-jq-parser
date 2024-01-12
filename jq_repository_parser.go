@@ -17,8 +17,8 @@ type RepositoryDTO struct {
 func (r *RepositoryDTO) Convert() opslevel.ServiceRepositoryCreateInput {
 	return opslevel.ServiceRepositoryCreateInput{
 		Repository:    *opslevel.NewIdentifier(r.Repo),
-		BaseDirectory: r.Directory,
-		DisplayName:   r.Name,
+		BaseDirectory: opslevel.RefOf(r.Directory),
+		DisplayName:   opslevel.RefOf(r.Name),
 	}
 }
 
