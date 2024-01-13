@@ -1,4 +1,4 @@
-module github.com/opslevel/opslevel-jq-parser/v2023
+module github.com/opslevel/opslevel-jq-parser/v2024
 
 go 1.21.0
 

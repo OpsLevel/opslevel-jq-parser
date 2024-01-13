@@ -6,7 +6,7 @@ This library leverages https://github.com/flant/libjq-go which are CGO bindings 
 #  Installation
 
 ```bash
-go get github.com/opslevel/opslevel-jq-parser/v2023
+go get github.com/opslevel/opslevel-jq-parser/v2024
 ```
 
 Then wherever you compile or test that project you'll need to add
