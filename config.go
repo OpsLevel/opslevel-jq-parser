@@ -1,7 +1,7 @@
 package opslevel_jq_parser
 
 import (
-	"github.com/opslevel/opslevel-go/v2023"
+	"github.com/opslevel/opslevel-go/v2024"
 	"gopkg.in/yaml.v3"
 )
 
