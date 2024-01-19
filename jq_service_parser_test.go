@@ -23,7 +23,12 @@ var k8sResource = `{
 			"opslevel.com/language": "ruby",
 			"opslevel.com/framework": "rails",
 			"opslevel.com/system": "monolith",
-			"opslevel.com/tools.logs.my-logs": "https://example.com",
+            "opslevel.com/tools.logs.my-logs": "https://splunk.com",
+			"opslevel.com/tools.logs.my-schedule": "https://pagerduty.com",
+			"opslevel.com/tools.logs.my-logs": "https://splunk.com",
+			"opslevel.com/tools.logs.my-schedule": "https://pagerduty.com",
+			"opslevel.com/tools.logs.my-graphs": "https://datadog.com",
+			"opslevel.com/tools.logs.my-ci": "https://circleci.com",
 			"opslevel.com/repo.terraform.clusters.dev.opslevel": "gitlab.com:opslevel/terraform",
             "repo": "github.com:hashicorp/vault"
         },
@@ -293,7 +298,7 @@ func TestJQServiceParserSampleConfig(t *testing.T) {
 	autopilot.Equals(t, opslevel.TagInput{Key: "environment", Value: "dev"}, service.TagCreates[0])
 	autopilot.Equals(t, 5, len(service.TagAssigns))
 	autopilot.Equals(t, opslevel.TagInput{Key: "imported", Value: "kubectl-opslevel"}, service.TagAssigns[0])
-	autopilot.Equals(t, 1, len(service.Tools))
+	autopilot.Equals(t, 4, len(service.Tools))
 	autopilot.Equals(t, 3, len(service.Repositories))
 }
 
