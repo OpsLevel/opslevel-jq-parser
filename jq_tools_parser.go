@@ -2,6 +2,7 @@ package opslevel_jq_parser
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/opslevel/opslevel-go/v2024"
@@ -22,7 +23,7 @@ func NewJQToolsParser(expressions []string) *JQToolsParser {
 	}
 }
 
-func (p *JQToolsParser) Run(data string) ([]opslevel.ToolCreateInput, error) {
+func (p *JQToolsParser) Fetch(data string) ([]opslevel.ToolCreateInput, error) {
 	output := make([]opslevel.ToolCreateInput, 0, len(p.programs))
 	for _, program := range p.programs {
 		response, err := program.Run(data)
@@ -51,4 +52,19 @@ func (p *JQToolsParser) Run(data string) ([]opslevel.ToolCreateInput, error) {
 		}
 	}
 	return output, nil
+}
+
+func (p *JQToolsParser) Run(data string) ([]opslevel.ToolCreateInput, error) {
+	result, err := p.Fetch(data)
+	if err != nil {
+		return nil, err
+	}
+	result = Deduplicated(result, func(tool opslevel.ToolCreateInput) string {
+		toolEnv := ""
+		if tool.Environment != nil {
+			toolEnv = *tool.Environment
+		}
+		return fmt.Sprintf("%s%s%s", tool.Category, tool.DisplayName, toolEnv)
+	})
+	return result, nil
 }
