@@ -2,8 +2,9 @@ package opslevel_jq_parser
 
 import (
 	"encoding/json"
-	"github.com/rs/zerolog/log"
 	"strings"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/opslevel/opslevel-go/v2024"
 )
