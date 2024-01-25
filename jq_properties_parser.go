@@ -2,7 +2,6 @@ package opslevel_jq_parser
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/rs/zerolog/log"
 	"strings"
 
@@ -24,18 +23,16 @@ func NewJQPropertiesParser(cfg PropertyRegistrationConfig) *JQPropertiesParser {
 }
 
 func propertyAssignmentFromMap(definition string, input map[string]interface{}) (opslevel.PropertyInput, error) {
-	owner := ""
+	var owner string
 	var value opslevel.JsonString
-	log.Debug().Str("func", "propertyAssignmentFromMap").Str("def", definition).Msgf("input %#v", input)
+	log.Debug().Msgf("property assignment '%s' input is %#v", definition, input)
 	for k, v := range input {
 		switch k {
 		case "owner":
 			owner = v.(string)
 		case "value":
-			// TODO: safer type cast
 			jsonString, err := opslevel.NewJSONInput(v)
 			if err != nil {
-				// TODO: log here
 				return opslevel.PropertyInput{}, err
 			}
 			value = *jsonString
@@ -45,17 +42,16 @@ func propertyAssignmentFromMap(definition string, input map[string]interface{}) 
 		return opslevel.PropertyInput{
 			Owner:      *opslevel.NewIdentifier(owner),
 			Definition: *opslevel.NewIdentifier(definition),
-			Value:      value, // TODO: is this correct
+			Value:      value,
 		}, nil
 	}
-	log.Warn().Str("func", "propertyAssignmentFromMap").Str("definition", definition).Str("owner", owner).Interface("value", value).Msg("got incomplete property assignment")
+	log.Warn().Msgf("got incomplete property assignment '%s'", definition)
 	return opslevel.PropertyInput{}, nil
 }
 
 func (p *JQPropertiesParser) parse(programs []*JQFieldParser, data string) ([]opslevel.PropertyInput, error) {
 	output := make([]opslevel.PropertyInput, 0, len(programs))
 	for _, program := range programs {
-
 		response, err := program.Run(data)
 		if err != nil {
 			log.Warn().Msg("properties parser: jq error")
@@ -69,27 +65,26 @@ func (p *JQPropertiesParser) parse(programs []*JQFieldParser, data string) ([]op
 		if strings.HasPrefix(response, "[") && strings.HasSuffix(response, "]") {
 			var properties []map[string]string
 			if err := json.Unmarshal([]byte(response), &properties); err != nil {
-				// TODO: log error
+				log.Warn().Msg("skipping a property assignment - error decoding at start")
 				continue
 			}
 			for _, item := range properties {
 				if len(item) != 1 {
-					panic("wrong")
+					log.Warn().Msg("skipping a property assignment - bad format")
+					continue
 				}
 				var def string
 				for k := range item {
 					def = k
-					fmt.Println("added def " + def)
 				}
 				var propertyBody map[string]interface{}
 				if err := json.Unmarshal([]byte(item[def]), &propertyBody); err != nil {
-					// TODO: log error
-					fmt.Println(err)
+					log.Warn().Msgf("got error decoding property assignment '%s'", def)
 					continue
 				}
 				out, err := propertyAssignmentFromMap(def, propertyBody)
 				if err != nil {
-					// TODO: log error
+					log.Warn().Msgf("got error parsing property assignment '%s'", def)
 					continue
 				}
 				output = append(output, out)
