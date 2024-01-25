@@ -16,22 +16,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          submodules: 'true'
           token: ${{ secrets.ORG_GITHUB_TOKEN }}
       - name: Fetch All Tags
         run: git fetch --force --tags
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-      - name: Cache Go modules
-        uses: actions/cache@v4
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
       - name: Import GPG Key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v6
@@ -71,15 +58,6 @@ jobs:
           fi
           git tag -f ${{ steps.version.outputs.RELEASE_VERSION }} -m "Cut Release '${{ steps.version.outputs.RELEASE_VERSION }}'"
           git push -f origin refs/tags/${{ steps.version.outputs.RELEASE_VERSION }}
-      # This needs to happen after the above, so we don't commit the ./libjq folder
-      - name: Setup LibJQ
-        run: |-
-          docker run --name "libjq" -d flant/jq:b6be13d5-glibc
-          docker cp libjq:/libjq ./libjq 
-          docker rm libjq
-          echo CGO_ENABLED=1 >> $GITHUB_ENV
-          echo CGO_CFLAGS="-I$(pwd)/libjq/include" >> $GITHUB_ENV
-          echo CGO_LDFLAGS="-L$(pwd)/libjq/lib" >> $GITHUB_ENV
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
