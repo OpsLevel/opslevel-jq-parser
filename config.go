@@ -29,7 +29,7 @@ owner: .metadata.annotations."opslevel.com/owner"
 product: .metadata.annotations."opslevel.com/product"
 properties:
   assign:
-    # find annotations with format: opslevel.com/properties.<property-definition name>: <value>
+    # find annotations with format: opslevel.com/properties.<property_definition_identifier>: {"owner": "<owner_identifier>", "value": <valid JSON>}
     - '.metadata.annotations | to_entries |  map(select(.key | startswith("opslevel.com/property"))) | map({(.key | split(".")[2]): .value})'
 system: .metadata.annotations."opslevel.com/system"
 tier: .metadata.annotations."opslevel.com/tier"
