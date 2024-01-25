@@ -1,41 +1,43 @@
 package opslevel_jq_parser
 
 type JQServiceParser struct {
-	name         *JQFieldParser
-	description  *JQFieldParser
-	owner        *JQFieldParser
-	lifecycle    *JQFieldParser
-	tier         *JQFieldParser
-	product      *JQFieldParser
-	language     *JQFieldParser
-	framework    *JQFieldParser
-	system       *JQFieldParser
 	aliases      *JQArrayParser
-	tags         *JQTagsParser
-	tools        *JQToolsParser
+	description  *JQFieldParser
+	framework    *JQFieldParser
+	language     *JQFieldParser
+	lifecycle    *JQFieldParser
+	name         *JQFieldParser
+	owner        *JQFieldParser
+	product      *JQFieldParser
+	properties   *JQPropertiesParser
 	repositories *JQRepositoryParser
+	system       *JQFieldParser
+	tags         *JQTagsParser
+	tier         *JQFieldParser
+	tools        *JQToolsParser
 }
 
 func NewJQServiceParser(cfg ServiceRegistrationConfig) *JQServiceParser {
 	return &JQServiceParser{
-		name:         NewJQFieldParser(cfg.Name),
-		description:  NewJQFieldParser(cfg.Description),
-		owner:        NewJQFieldParser(cfg.Owner),
-		lifecycle:    NewJQFieldParser(cfg.Lifecycle),
-		tier:         NewJQFieldParser(cfg.Tier),
-		product:      NewJQFieldParser(cfg.Product),
-		language:     NewJQFieldParser(cfg.Language),
-		framework:    NewJQFieldParser(cfg.Framework),
-		system:       NewJQFieldParser(cfg.System),
 		aliases:      NewJQArrayParser(cfg.Aliases),
-		tags:         NewJQTagsParser(cfg.Tags),
-		tools:        NewJQToolsParser(cfg.Tools),
+		description:  NewJQFieldParser(cfg.Description),
+		framework:    NewJQFieldParser(cfg.Framework),
+		language:     NewJQFieldParser(cfg.Language),
+		lifecycle:    NewJQFieldParser(cfg.Lifecycle),
+		name:         NewJQFieldParser(cfg.Name),
+		owner:        NewJQFieldParser(cfg.Owner),
+		product:      NewJQFieldParser(cfg.Product),
+		properties:   NewJQPropertiesParser(cfg.Properties),
 		repositories: NewJQRepositoryParser(cfg.Repositories),
+		system:       NewJQFieldParser(cfg.System),
+		tags:         NewJQTagsParser(cfg.Tags),
+		tier:         NewJQFieldParser(cfg.Tier),
+		tools:        NewJQToolsParser(cfg.Tools),
 	}
 }
 
 func (p *JQServiceParser) Run(json string) (*ServiceRegistration, error) {
-	name, err := p.name.Run(json)
+	aliases, err := p.aliases.Run(json)
 	if err != nil {
 		return nil, err
 	}
@@ -43,65 +45,70 @@ func (p *JQServiceParser) Run(json string) (*ServiceRegistration, error) {
 	if err != nil {
 		return nil, err
 	}
-	Owner, err := p.owner.Run(json)
+	framework, err := p.framework.Run(json)
 	if err != nil {
 		return nil, err
 	}
-	Lifecycle, err := p.lifecycle.Run(json)
+	language, err := p.language.Run(json)
 	if err != nil {
 		return nil, err
 	}
-	Tier, err := p.tier.Run(json)
+	lifecycle, err := p.lifecycle.Run(json)
 	if err != nil {
 		return nil, err
 	}
-	Product, err := p.product.Run(json)
+	name, err := p.name.Run(json)
 	if err != nil {
 		return nil, err
 	}
-	Language, err := p.language.Run(json)
+	owner, err := p.owner.Run(json)
 	if err != nil {
 		return nil, err
 	}
-	Framework, err := p.framework.Run(json)
+	product, err := p.product.Run(json)
 	if err != nil {
 		return nil, err
 	}
-	System, err := p.system.Run(json)
+	properties, err := p.properties.Run(json)
 	if err != nil {
 		return nil, err
 	}
-	Aliases, err := p.aliases.Run(json)
+	repositories, err := p.repositories.Run(json)
 	if err != nil {
 		return nil, err
 	}
-	TagCreates, TagAssigns, err := p.tags.Run(json)
+	system, err := p.system.Run(json)
 	if err != nil {
 		return nil, err
 	}
-	Tools, err := p.tools.Run(json)
+	tagCreates, tagAssigns, err := p.tags.Run(json)
 	if err != nil {
 		return nil, err
 	}
-	Repositories, err := p.repositories.Run(json)
+	tier, err := p.tier.Run(json)
+	if err != nil {
+		return nil, err
+	}
+	tools, err := p.tools.Run(json)
 	if err != nil {
 		return nil, err
 	}
 	return &ServiceRegistration{
-		Name:         name,
+		Aliases:      aliases,
 		Description:  description,
-		Owner:        Owner,
-		Lifecycle:    Lifecycle,
-		Tier:         Tier,
-		Product:      Product,
-		Language:     Language,
-		Framework:    Framework,
-		System:       System,
-		Aliases:      Aliases,
-		TagCreates:   TagCreates,
-		TagAssigns:   TagAssigns,
-		Tools:        Tools,
-		Repositories: Repositories,
+		Framework:    framework,
+		Language:     language,
+		Lifecycle:    lifecycle,
+		Name:         name,
+		Owner:        owner,
+		Product:      product,
+		Properties:   properties,
+		Repositories: repositories,
+		System:       system,
+		TagAssigns:   tagAssigns,
+		TagCreates:   tagCreates,
+		Tier:         tier,
+		Tools:        tools,
 	}, nil
 }
 

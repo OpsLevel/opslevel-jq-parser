@@ -22,6 +22,9 @@ var k8sResource = `{
 			"opslevel.com/lifecycle": "alpha",
 			"opslevel.com/tier": "tier_1",
 			"opslevel.com/product": "jklabs",
+			"opslevel.com/property.my_bool": "{\"owner\": \"platform\", \"value\": true}",
+            "opslevel.com/property.my_string": "{\"owner\": \"leadership\", \"value\": \"hello world\"}",
+            "opslevel.com/property.my_object": "{\"owner\": \"engineering\", \"value\": {\"message\": \"hello world\", \"boolean\": true}}",
 			"opslevel.com/language": "ruby",
 			"opslevel.com/framework": "rails",
 			"opslevel.com/system": "monolith",
@@ -258,6 +261,8 @@ func TestJQServiceParserSimpleConfig(t *testing.T) {
 	autopilot.Equals(t, "", service.Lifecycle)
 	autopilot.Equals(t, "", service.Tier)
 	autopilot.Equals(t, "", service.Product)
+	// property assignment
+	autopilot.Equals(t, 0, len(service.Properties))
 	autopilot.Equals(t, "", service.Language)
 	autopilot.Equals(t, "", service.Framework)
 	// autopilot.Equals(t, "", service.System)
@@ -302,6 +307,18 @@ func TestJQServiceParserSampleConfig(t *testing.T) {
 	autopilot.Equals(t, opslevel.TagInput{Key: "imported", Value: "kubectl-opslevel"}, service.TagAssigns[0])
 	autopilot.Equals(t, 4, len(service.Tools))
 	autopilot.Equals(t, 3, len(service.Repositories))
+	// property assignment
+	autopilot.Equals(t, 3, len(service.Properties))
+	autopilot.Equals(t, "platform", *service.Properties[0].Owner.Alias)
+	autopilot.Equals(t, "leadership", *service.Properties[1].Owner.Alias)
+	autopilot.Equals(t, "engineering", *service.Properties[2].Owner.Alias)
+	autopilot.Equals(t, true, service.Properties[0].Value.AsBool())
+	autopilot.Equals(t, "hello world", service.Properties[1].Value.AsString())
+	expectedValue := map[string]interface{}{
+		"boolean": true,
+		"message": "hello world",
+	}
+	autopilot.Equals(t, expectedValue, service.Properties[2].Value.AsMap())
 }
 
 func BenchmarkJQParser_New(b *testing.B) {
