@@ -28,9 +28,7 @@ lifecycle: .metadata.annotations."opslevel.com/lifecycle"
 owner: .metadata.annotations."opslevel.com/owner"
 product: .metadata.annotations."opslevel.com/product"
 properties:
-  assign:
-    # find annotations with format: opslevel.com/properties.<property_definition_identifier>: {"owner": "<owner_identifier>", "value": <valid JSON>}
-    - '.metadata.annotations | to_entries |  map(select(.key | startswith("opslevel.com/property"))) | map({(.key | split(".")[2]): .value})'
+  - '.metadata.annotations | to_entries |  map(select(.key | startswith("opslevel.com/property"))) | map({(.key | split(".")[2]): .value})'
 system: .metadata.annotations."opslevel.com/system"
 tier: .metadata.annotations."opslevel.com/tier"
 repositories: # attach repositories to the service using the opslevel repo alias - IE github.com:hashicorp/vault
@@ -60,26 +58,22 @@ type TagRegistrationConfig struct {
 	Create []string `json:"create" yaml:"create"` // JQ expressions that return a single string or a map[string]string
 }
 
-type PropertyRegistrationConfig struct {
-	Assign []string `json:"assign" yaml:"assign"`
-}
-
 // ServiceRegistrationConfig represents the jq expressions configuration that can turn json data into a ServiceRegistration
 type ServiceRegistrationConfig struct {
-	Aliases      []string                   `json:"aliases" yaml:"aliases"` // JQ expressions that return a single string or a []string
-	Description  string                     `json:"description" yaml:"description"`
-	Framework    string                     `json:"framework" yaml:"framework"`
-	Language     string                     `json:"language" yaml:"language"`
-	Lifecycle    string                     `json:"lifecycle" yaml:"lifecycle"`
-	Name         string                     `json:"name" yaml:"name"`
-	Owner        string                     `json:"owner" yaml:"owner"`
-	Product      string                     `json:"product" yaml:"product"`
-	Properties   PropertyRegistrationConfig `json:"properties" yaml:"properties"`
-	Repositories []string                   `json:"repositories" yaml:"repositories"` // JQ expressions that return a single string or []string or map[string]string or a []map[string]string
-	System       string                     `json:"system" yaml:"system"`
-	Tags         TagRegistrationConfig      `json:"tags" yaml:"tags"`
-	Tier         string                     `json:"tier" yaml:"tier"`
-	Tools        []string                   `json:"tools" yaml:"tools"` // JQ expressions that return a single map[string]string or a []map[string]string
+	Aliases      []string              `json:"aliases" yaml:"aliases"` // JQ expressions that return a single string or a []string
+	Description  string                `json:"description" yaml:"description"`
+	Framework    string                `json:"framework" yaml:"framework"`
+	Language     string                `json:"language" yaml:"language"`
+	Lifecycle    string                `json:"lifecycle" yaml:"lifecycle"`
+	Name         string                `json:"name" yaml:"name"`
+	Owner        string                `json:"owner" yaml:"owner"`
+	Product      string                `json:"product" yaml:"product"`
+	Properties   []string              `json:"properties" yaml:"properties"`
+	Repositories []string              `json:"repositories" yaml:"repositories"` // JQ expressions that return a single string or []string or map[string]string or a []map[string]string
+	System       string                `json:"system" yaml:"system"`
+	Tags         TagRegistrationConfig `json:"tags" yaml:"tags"`
+	Tier         string                `json:"tier" yaml:"tier"`
+	Tools        []string              `json:"tools" yaml:"tools"` // JQ expressions that return a single map[string]string or a []map[string]string
 }
 
 // ServiceRegistration represents the parsed json data from a ServiceRegistrationConfig
@@ -92,7 +86,7 @@ type ServiceRegistration struct {
 	Name         string                                  `json:",omitempty"`
 	Owner        string                                  `json:",omitempty"`
 	Product      string                                  `json:",omitempty"`
-	Properties   []opslevel.PropertyInput                `json:",omitempty"`
+	Properties   map[string]opslevel.JsonString          `json:",omitempty"`
 	Repositories []opslevel.ServiceRepositoryCreateInput `json:",omitempty"` // This is a concrete class so fields are validated during `service preview`
 	System       string                                  `json:",omitempty"`
 	TagAssigns   []opslevel.TagInput                     `json:",omitempty"`

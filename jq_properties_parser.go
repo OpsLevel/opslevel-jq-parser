@@ -10,49 +10,23 @@ import (
 )
 
 type JQPropertiesParser struct {
-	assigns []*JQFieldParser
+	programs []*JQFieldParser
 }
 
-func NewJQPropertiesParser(cfg PropertyRegistrationConfig) *JQPropertiesParser {
-	assigns := make([]*JQFieldParser, len(cfg.Assign))
-	for i, expression := range cfg.Assign {
-		assigns[i] = NewJQFieldParser(expression)
+func NewJQPropertiesParser(expressions []string) *JQPropertiesParser {
+	programs := make([]*JQFieldParser, len(expressions))
+	for i, expression := range expressions {
+		programs[i] = NewJQFieldParser(expression)
 	}
 	return &JQPropertiesParser{
-		assigns: assigns,
+		programs: programs,
 	}
 }
 
-func propertyAssignmentFromMap(definition string, input map[string]interface{}) (opslevel.PropertyInput, error) {
-	var owner string
-	var value opslevel.JsonString
-	log.Debug().Msgf("property assignment '%s' input is %#v", definition, input)
-	for k, v := range input {
-		switch k {
-		case "owner":
-			owner = v.(string)
-		case "value":
-			jsonString, err := opslevel.NewJSONInput(v)
-			if err != nil {
-				return opslevel.PropertyInput{}, err
-			}
-			value = *jsonString
-		}
-	}
-	if owner != "" && value != "" {
-		return opslevel.PropertyInput{
-			Owner:      *opslevel.NewIdentifier(owner),
-			Definition: *opslevel.NewIdentifier(definition),
-			Value:      value,
-		}, nil
-	}
-	log.Warn().Msgf("got incomplete property assignment '%s'", definition)
-	return opslevel.PropertyInput{}, nil
-}
-
-func (p *JQPropertiesParser) parse(programs []*JQFieldParser, data string) ([]opslevel.PropertyInput, error) {
-	output := make([]opslevel.PropertyInput, 0, len(programs))
-	for _, program := range programs {
+// parse returns a map so the definitions are already deduplicated.
+func (p *JQPropertiesParser) parse(data string) (map[string]opslevel.JsonString, error) {
+	output := make(map[string]opslevel.JsonString)
+	for _, program := range p.programs {
 		response, err := program.Run(data)
 		if err != nil {
 			log.Warn().Msg("properties parser: jq error")
@@ -66,37 +40,35 @@ func (p *JQPropertiesParser) parse(programs []*JQFieldParser, data string) ([]op
 		if strings.HasPrefix(response, "[") && strings.HasSuffix(response, "]") {
 			var properties []map[string]string
 			if err := json.Unmarshal([]byte(response), &properties); err != nil {
-				log.Warn().Msg("skipping a property assignment - error decoding at start")
+				log.Warn().Err(err).Msg("properties parser: error decoding inside array")
 				continue
 			}
-			for _, item := range properties {
-				if len(item) != 1 {
-					log.Warn().Msg("skipping a property assignment - bad format")
+			for _, prop := range properties {
+				// prop is map[my_object:{"message": "hello world", "boolean": true}]
+				if len(prop) != 1 {
+					log.Warn().Err(err).Msg("properties parser: bad format")
 					continue
 				}
 				var def string
-				for k := range item {
-					def = k
+				for key := range prop {
+					def = key
 				}
-				var propertyBody map[string]interface{}
-				if err := json.Unmarshal([]byte(item[def]), &propertyBody); err != nil {
-					log.Warn().Msgf("got error decoding property assignment '%s'", def)
-					continue
-				}
-				out, err := propertyAssignmentFromMap(def, propertyBody)
+				value, err := opslevel.NewJSONInput(prop[def])
 				if err != nil {
-					log.Warn().Msgf("got error parsing property assignment '%s'", def)
+					log.Warn().Err(err).Msgf("properties parser: expected valid json string")
 					continue
 				}
-				output = append(output, out)
+				output[def] = *value
 			}
+		} else {
+			log.Warn().Msg("properties parser: expected array")
 		}
 	}
 	return output, nil
 }
 
-func (p *JQPropertiesParser) Run(data string) ([]opslevel.PropertyInput, error) {
-	result, err := p.parse(p.assigns, data)
+func (p *JQPropertiesParser) Run(data string) (map[string]opslevel.JsonString, error) {
+	result, err := p.parse(data)
 	if err != nil {
 		return nil, err
 	}
