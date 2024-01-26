@@ -9,6 +9,9 @@ var SimpleConfig = `name: .metadata.name
 owner: .metadata.namespace
 aliases: # This are how we identify the services again during reconciliation - please make sure they are very unique
   - '"k8s:\(.metadata.name)-\(.metadata.namespace)"'
+properties:
+  - '{"foo": .metadata.annotations.foo}'
+  - '{"details": .metadata.annotations.details}'
 tags:
   assign: # tag with the same key name but with a different value will be updated on the service
     - '{"imported": "kubectl-opslevel"}'

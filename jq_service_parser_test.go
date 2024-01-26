@@ -16,6 +16,8 @@ var k8sResource = `{
     "metadata": {
         "annotations": {
             "deployment.kubernetes.io/revision": "243",
+			"details": {"code": 200, "message": "hello world"},
+			"foo": "bar",
             "kots.io/app-slug": "opslevel",
 			"opslevel.com/description": "this is a description",
 			"opslevel.com/owner": "velero",
@@ -262,7 +264,13 @@ func TestJQServiceParserSimpleConfig(t *testing.T) {
 	autopilot.Equals(t, "", service.Tier)
 	autopilot.Equals(t, "", service.Product)
 	// property assignment
-	autopilot.Equals(t, 0, len(service.Properties))
+	autopilot.Equals(t, 2, len(service.Properties))
+	autopilot.Equals(t, "bar", service.Properties["foo"].AsString())
+	expectedValue := map[string]interface{}{
+		"code":    float64(200),
+		"message": "hello world",
+	}
+	autopilot.Equals(t, expectedValue, service.Properties["details"].AsMap())
 	autopilot.Equals(t, "", service.Language)
 	autopilot.Equals(t, "", service.Framework)
 	// autopilot.Equals(t, "", service.System)
@@ -308,7 +316,6 @@ func TestJQServiceParserSampleConfig(t *testing.T) {
 	autopilot.Equals(t, 4, len(service.Tools))
 	autopilot.Equals(t, 3, len(service.Repositories))
 	// property assignment
-	fmt.Println(service.Properties)
 	autopilot.Equals(t, 3, len(service.Properties))
 	autopilot.Equals(t, true, service.Properties["my_bool"].AsBool())
 	autopilot.Equals(t, "hello world", service.Properties["my_string"].AsString())

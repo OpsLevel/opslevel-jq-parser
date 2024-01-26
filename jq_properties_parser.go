@@ -23,6 +23,44 @@ func NewJQPropertiesParser(expressions []string) *JQPropertiesParser {
 	}
 }
 
+func parsePropertiesInner(output map[string]opslevel.JsonString, prop map[string]interface{}) {
+	// prop is map[my_object:{"message": "hello world", "boolean": true}]
+	if len(prop) != 1 {
+		log.Warn().Msg("properties parser: bad format")
+		return
+	}
+	var def string
+	for key := range prop {
+		def = key
+	}
+	value, err := opslevel.NewJSONInput(prop[def])
+	if err != nil {
+		log.Warn().Err(err).Msgf("properties parser: expected valid json string")
+		return
+	}
+	output[def] = *value
+}
+
+func parsePropertiesArray(output map[string]opslevel.JsonString, response string) {
+	var properties []map[string]interface{}
+	if err := json.Unmarshal([]byte(response), &properties); err != nil {
+		log.Warn().Err(err).Msg("properties parser: error decoding inside array")
+		return
+	}
+	for _, prop := range properties {
+		parsePropertiesInner(output, prop)
+	}
+}
+
+func parsePropertiesObject(output map[string]opslevel.JsonString, response string) {
+	var prop map[string]interface{}
+	if err := json.Unmarshal([]byte(response), &prop); err != nil {
+		log.Warn().Err(err).Msg("properties parser: error decoding object")
+		return
+	}
+	parsePropertiesInner(output, prop)
+}
+
 // parse returns a map so the definitions are already deduplicated.
 func (p *JQPropertiesParser) parse(data string) (map[string]opslevel.JsonString, error) {
 	output := make(map[string]opslevel.JsonString)
@@ -37,31 +75,12 @@ func (p *JQPropertiesParser) parse(data string) (map[string]opslevel.JsonString,
 			continue
 		}
 
-		if !strings.HasPrefix(response, "[") && !strings.HasSuffix(response, "]") {
-			log.Warn().Msg("properties parser: expected array")
-			continue
-		}
-		var properties []map[string]interface{}
-		if err := json.Unmarshal([]byte(response), &properties); err != nil {
-			log.Warn().Err(err).Msg("properties parser: error decoding inside array")
-			continue
-		}
-		for _, prop := range properties {
-			// prop is map[my_object:{"message": "hello world", "boolean": true}]
-			if len(prop) != 1 {
-				log.Warn().Msg("properties parser: bad format")
-				continue
-			}
-			var def string
-			for key := range prop {
-				def = key
-			}
-			value, err := opslevel.NewJSONInput(prop[def])
-			if err != nil {
-				log.Warn().Err(err).Msgf("properties parser: expected valid json string")
-				continue
-			}
-			output[def] = *value
+		if strings.HasPrefix(response, "[") && strings.HasSuffix(response, "]") {
+			parsePropertiesArray(output, response)
+		} else if strings.HasPrefix(response, "{") && strings.HasSuffix(response, "}") {
+			parsePropertiesObject(output, response)
+		} else {
+			log.Warn().Msg("properties parser: expected array or object")
 		}
 	}
 	return output, nil
