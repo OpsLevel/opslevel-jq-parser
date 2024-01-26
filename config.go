@@ -28,6 +28,7 @@ lifecycle: .metadata.annotations."opslevel.com/lifecycle"
 owner: .metadata.annotations."opslevel.com/owner"
 product: .metadata.annotations."opslevel.com/product"
 properties:
+  # find annotations with format: opslevel.com/property.<property_definition_identifier>: <valid JSON>
   - '.metadata.annotations | to_entries |  map(select(.key | startswith("opslevel.com/property"))) | map({(.key | split(".")[2]): .value})'
 system: .metadata.annotations."opslevel.com/system"
 tier: .metadata.annotations."opslevel.com/tier"
