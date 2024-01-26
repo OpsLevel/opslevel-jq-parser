@@ -9,7 +9,7 @@ type JQServiceParser struct {
 	name         *JQFieldParser
 	owner        *JQFieldParser
 	product      *JQFieldParser
-	properties   *JQPropertiesParser
+	properties   JQDictParser
 	repositories *JQRepositoryParser
 	system       *JQFieldParser
 	tags         *JQTagsParser
@@ -27,7 +27,7 @@ func NewJQServiceParser(cfg ServiceRegistrationConfig) *JQServiceParser {
 		name:         NewJQFieldParser(cfg.Name),
 		owner:        NewJQFieldParser(cfg.Owner),
 		product:      NewJQFieldParser(cfg.Product),
-		properties:   NewJQPropertiesParser(cfg.Properties),
+		properties:   NewJQDictParser(cfg.Properties),
 		repositories: NewJQRepositoryParser(cfg.Repositories),
 		system:       NewJQFieldParser(cfg.System),
 		tags:         NewJQTagsParser(cfg.Tags),
