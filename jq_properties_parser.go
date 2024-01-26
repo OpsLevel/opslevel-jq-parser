@@ -38,7 +38,7 @@ func (p *JQPropertiesParser) parse(data string) (map[string]opslevel.JsonString,
 		}
 
 		if strings.HasPrefix(response, "[") && strings.HasSuffix(response, "]") {
-			var properties []map[string]string
+			var properties []map[string]interface{}
 			if err := json.Unmarshal([]byte(response), &properties); err != nil {
 				log.Warn().Err(err).Msg("properties parser: error decoding inside array")
 				continue
