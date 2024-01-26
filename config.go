@@ -10,8 +10,13 @@ owner: .metadata.namespace
 aliases: # This are how we identify the services again during reconciliation - please make sure they are very unique
   - '"k8s:\(.metadata.name)-\(.metadata.namespace)"'
 properties:
-  - '{"foo": .metadata.annotations.foo}'
-  - '{"details": .metadata.annotations.details}'
+  notfound: .metadata.annotations.notfound
+  notfound2: .metadata.annotations.notfound2
+  prop_bool: .metadata.annotations.prop_bool
+  prop_empty_object: .metadata.annotations.prop_empty_object
+  prop_empty_string: .metadata.annotations.prop_empty_string
+  prop_object: .metadata.annotations.prop_object
+  prop_string: .metadata.annotations.prop_string
 tags:
   assign: # tag with the same key name but with a different value will be updated on the service
     - '{"imported": "kubectl-opslevel"}'
@@ -30,9 +35,6 @@ language: .metadata.annotations."opslevel.com/language"
 lifecycle: .metadata.annotations."opslevel.com/lifecycle"
 owner: .metadata.annotations."opslevel.com/owner"
 product: .metadata.annotations."opslevel.com/product"
-properties:
-  # find annotations with format: opslevel.com/property.<property_definition_identifier>: <valid JSON>
-  - '.metadata.annotations | to_entries |  map(select(.key | startswith("opslevel.com/property"))) | map({(.key | split(".")[2]): .value})'
 system: .metadata.annotations."opslevel.com/system"
 tier: .metadata.annotations."opslevel.com/tier"
 repositories: # attach repositories to the service using the opslevel repo alias - IE github.com:hashicorp/vault
@@ -72,7 +74,7 @@ type ServiceRegistrationConfig struct {
 	Name         string                `json:"name" yaml:"name"`
 	Owner        string                `json:"owner" yaml:"owner"`
 	Product      string                `json:"product" yaml:"product"`
-	Properties   []string              `json:"properties" yaml:"properties"`
+	Properties   map[string]string     `json:"properties" yaml:"properties"`
 	Repositories []string              `json:"repositories" yaml:"repositories"` // JQ expressions that return a single string or []string or map[string]string or a []map[string]string
 	System       string                `json:"system" yaml:"system"`
 	Tags         TagRegistrationConfig `json:"tags" yaml:"tags"`

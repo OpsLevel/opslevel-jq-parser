@@ -15,29 +15,29 @@ var k8sResource = `{
     "kind": "Deployment",
     "metadata": {
         "annotations": {
-            "deployment.kubernetes.io/revision": "243",
-			"details": {"code": 200, "message": "hello world"},
-			"foo": "bar",
-            "kots.io/app-slug": "opslevel",
+			"deployment.kubernetes.io/revision": "243",
+			"kots.io/app-slug": "opslevel",
 			"opslevel.com/description": "this is a description",
-			"opslevel.com/owner": "velero",
-			"opslevel.com/lifecycle": "alpha",
-			"opslevel.com/tier": "tier_1",
-			"opslevel.com/product": "jklabs",
-			"opslevel.com/property.my_bool": true,
-            "opslevel.com/property.my_string": "hello world",
-            "opslevel.com/property.my_object": {"message": "hello world", "boolean": true},
-			"opslevel.com/language": "ruby",
 			"opslevel.com/framework": "rails",
+			"opslevel.com/language": "ruby",
+			"opslevel.com/lifecycle": "alpha",
+			"opslevel.com/owner": "velero",
+			"opslevel.com/product": "jklabs",
+			"opslevel.com/repo.terraform.clusters.dev.opslevel": "gitlab.com:opslevel/terraform",
 			"opslevel.com/system": "monolith",
-            "opslevel.com/tools.logs.my-logs": "https://splunk.com",
-			"opslevel.com/tools.logs.my-schedule": "https://pagerduty.com",
+			"opslevel.com/tier": "tier_1",
+			"opslevel.com/tools.logs.my-ci": "https://circleci.com",
+			"opslevel.com/tools.logs.my-graphs": "https://datadog.com",
+			"opslevel.com/tools.logs.my-logs": "https://splunk.com",
 			"opslevel.com/tools.logs.my-logs": "https://splunk.com",
 			"opslevel.com/tools.logs.my-schedule": "https://pagerduty.com",
-			"opslevel.com/tools.logs.my-graphs": "https://datadog.com",
-			"opslevel.com/tools.logs.my-ci": "https://circleci.com",
-			"opslevel.com/repo.terraform.clusters.dev.opslevel": "gitlab.com:opslevel/terraform",
-            "repo": "github.com:hashicorp/vault"
+			"opslevel.com/tools.logs.my-schedule": "https://pagerduty.com",
+			"prop_bool": true,
+			"prop_empty_object": {},
+			"prop_empty_string": "",
+			"prop_object": {"message": "hello world", "condition": true},
+			"prop_string": "hello world",
+			"repo": "github.com:hashicorp/vault"
         },
         "creationTimestamp": "2023-07-19T18:04:03Z",
         "generation": 243,
@@ -263,14 +263,6 @@ func TestJQServiceParserSimpleConfig(t *testing.T) {
 	autopilot.Equals(t, "", service.Lifecycle)
 	autopilot.Equals(t, "", service.Tier)
 	autopilot.Equals(t, "", service.Product)
-	// property assignment
-	autopilot.Equals(t, 2, len(service.Properties))
-	autopilot.Equals(t, "bar", service.Properties["foo"].AsString())
-	expectedValue := map[string]interface{}{
-		"code":    float64(200),
-		"message": "hello world",
-	}
-	autopilot.Equals(t, expectedValue, service.Properties["details"].AsMap())
 	autopilot.Equals(t, "", service.Language)
 	autopilot.Equals(t, "", service.Framework)
 	// autopilot.Equals(t, "", service.System)
@@ -282,6 +274,11 @@ func TestJQServiceParserSimpleConfig(t *testing.T) {
 	autopilot.Equals(t, opslevel.TagInput{Key: "imported", Value: "kubectl-opslevel"}, service.TagAssigns[0])
 	autopilot.Equals(t, 0, len(service.Tools))
 	autopilot.Equals(t, 0, len(service.Repositories))
+	// property assignment
+	fmt.Println(service.Properties)
+	autopilot.Equals(t, 5, len(service.Properties))
+	autopilot.Equals(t, true, service.Properties["prop_bool"].AsBool())
+	autopilot.Equals(t, "hello world", service.Properties["prop_string"].AsString())
 }
 
 func TestJQServiceParserSampleConfig(t *testing.T) {
@@ -315,15 +312,6 @@ func TestJQServiceParserSampleConfig(t *testing.T) {
 	autopilot.Equals(t, opslevel.TagInput{Key: "imported", Value: "kubectl-opslevel"}, service.TagAssigns[0])
 	autopilot.Equals(t, 4, len(service.Tools))
 	autopilot.Equals(t, 3, len(service.Repositories))
-	// property assignment
-	autopilot.Equals(t, 3, len(service.Properties))
-	autopilot.Equals(t, true, service.Properties["my_bool"].AsBool())
-	autopilot.Equals(t, "hello world", service.Properties["my_string"].AsString())
-	expectedValue := map[string]interface{}{
-		"boolean": true,
-		"message": "hello world",
-	}
-	autopilot.Equals(t, expectedValue, service.Properties["my_object"].AsMap())
 }
 
 func BenchmarkJQParser_New(b *testing.B) {
