@@ -58,7 +58,7 @@ tasks:
       - go test -race -coverprofile=coverage.txt -covermode=atomic -v ./... {{ .CLI_ARGS }}
 
   workspace:
-    desc: Setup workspace for cli & opslevel-go development
+    desc: Setup workspace for opslevel-jq-parser & opslevel-go development
     dir: "{{.SRC_DIR}}"
     cmds:
       - cmd: echo "Setting up opslevel-go workspace..."
