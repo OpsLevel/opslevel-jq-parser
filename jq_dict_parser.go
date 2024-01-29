@@ -2,9 +2,10 @@ package opslevel_jq_parser
 
 import (
 	"fmt"
-
 	libjq_go "github.com/flant/libjq-go"
 	"github.com/opslevel/opslevel-go/v2024"
+	"github.com/rs/zerolog/log"
+	"strings"
 )
 
 type JQDictParser map[string]JQFieldParser
@@ -29,18 +30,35 @@ func NewJQDictParser(dict map[string]string) map[string]JQFieldParser {
 func (p JQDictParser) Run(data string) (map[string]opslevel.JsonString, error) {
 	output := make(map[string]opslevel.JsonString)
 	for key, expression := range p {
-		x, err := expression.Run(data)
+		jqRes, err := expression.Run(data)
 		if err != nil {
-			return nil, err
-		}
-		fmt.Printf("x is '%s' %T\n", x, x)
-		if x == "null" {
+			log.Warn().Str("key", key).Err(err).Msg("error running jq expression")
 			continue
 		}
-		parsed, err := opslevel.NewJSONInput(x)
-		if err != nil {
-			return nil, err
+		if jqRes == "null" {
+			// in the case that the expression returned nothing (happens in the case where the key was not found)
+			// jq will return "null". This is not the same as empty string. So in that case, skip the item.
+			log.Debug().Str("key", key).Msg("jq returned 'null'")
+			continue
 		}
+		if strings.HasPrefix(jqRes, "{") && strings.HasSuffix(jqRes, "}") {
+			// TODO: this can be placed inside the NewJSONInput function in opslevel-go
+			// if the input given there is a string
+			schema, err := opslevel.NewJSONSchema(jqRes)
+			if err != nil {
+				log.Warn().Str("key", key).Err(err).Msg("error decoding object")
+				continue
+			}
+			schemaString := schema.AsString()
+			output[key] = opslevel.JsonString(schemaString)
+			continue
+		}
+		parsed, err := opslevel.NewJSONInput(jqRes)
+		if err != nil {
+			log.Warn().Str("key", key).Err(err).Msg("error decoding json")
+			continue
+		}
+		log.Debug().Str("key", key).Str("parsed", parsed.AsString()).Msg("parsed json")
 		output[key] = *parsed
 	}
 	return output, nil
