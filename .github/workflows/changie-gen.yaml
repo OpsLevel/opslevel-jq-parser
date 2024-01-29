@@ -20,6 +20,7 @@ jobs:
       with:
         ref: ${{ env.PR_BRANCH }}
         token: ${{ secrets.ORG_GITHUB_TOKEN }}
+        submodules: 'true'
 
     - name: Check if changelog file exists already
       if: github.event.workflow_run.conclusion == 'success'
