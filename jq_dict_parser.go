@@ -39,7 +39,6 @@ func (p JQDictParser) Run(data string) (map[string]opslevel.JsonString, error) {
 		if jqRes == "null" {
 			// in the case that the expression returned nothing (happens in the case where the key was not found)
 			// jq will return "null". This is not the same as empty string. So in that case, skip the item.
-			log.Debug().Str("key", key).Msg("jq returned 'null'")
 			continue
 		}
 		if strings.HasPrefix(jqRes, "{") && strings.HasSuffix(jqRes, "}") {
@@ -59,7 +58,6 @@ func (p JQDictParser) Run(data string) (map[string]opslevel.JsonString, error) {
 			log.Warn().Str("key", key).Err(err).Msg("error decoding json")
 			continue
 		}
-		log.Debug().Str("key", key).Str("parsed", parsed.AsString()).Msg("parsed json")
 		output[key] = *parsed
 	}
 	return output, nil
