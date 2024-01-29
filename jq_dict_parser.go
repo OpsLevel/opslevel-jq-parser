@@ -2,10 +2,11 @@ package opslevel_jq_parser
 
 import (
 	"fmt"
+	"strings"
+
 	libjq_go "github.com/flant/libjq-go"
 	"github.com/opslevel/opslevel-go/v2024"
 	"github.com/rs/zerolog/log"
-	"strings"
 )
 
 type JQDictParser map[string]JQFieldParser
