@@ -277,8 +277,11 @@ func TestJQServiceParserSimpleConfig(t *testing.T) {
 	// property assignment
 	fmt.Println(service.Properties)
 	autopilot.Equals(t, 5, len(service.Properties))
-	autopilot.Equals(t, true, service.Properties["prop_bool"].AsBool())
-	autopilot.Equals(t, "hello world", service.Properties["prop_string"].AsString())
+	autopilot.Equals(t, "\"true\"", string(service.Properties["prop_bool"]))
+	autopilot.Equals(t, "{}", string(service.Properties["prop_empty_object"]))
+	autopilot.Equals(t, "\"\"", string(service.Properties["prop_empty_string"]))
+	autopilot.Equals(t, `{"condition":true,"message":"hello world"}`, string(service.Properties["prop_object"]))
+	autopilot.Equals(t, "\"hello world\"", string(service.Properties["prop_string"]))
 }
 
 func TestJQServiceParserSampleConfig(t *testing.T) {
