@@ -34,7 +34,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.0 // indirect
 	github.com/opslevel/moredefaults v0.0.0-20240112142637-078c8ff8ba9c // indirect
-	github.com/relvacode/iso8601 v1.3.0 // indirect
+	github.com/relvacode/iso8601 v1.4.0 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	golang.org/x/crypto v0.18.0 // indirect
