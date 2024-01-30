@@ -5,6 +5,7 @@ import (
 
 	"github.com/flant/libjq-go"
 	"github.com/flant/libjq-go/pkg/jq"
+	"github.com/opslevel/opslevel-go/v2024"
 )
 
 type JQFieldParser struct {
@@ -24,6 +25,7 @@ func NewJQFieldParser(expression string) *JQFieldParser {
 	}
 }
 
-func (p *JQFieldParser) Run(data string) (string, error) {
-	return p.program.RunRaw(data)
+func (p *JQFieldParser) Run(data string) (opslevel.JsonString, error) {
+	jqResult, err := p.program.RunRaw(data)
+	return opslevel.JsonString(jqResult), err
 }
