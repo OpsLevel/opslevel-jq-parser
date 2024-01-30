@@ -1,7 +1,7 @@
 <p align="center">
     <a href="https://github.com/OpsLevel/opslevel-jq-parser/blob/main/LICENSE" alt="License">
         <img src="https://img.shields.io/github/license/OpsLevel/opslevel-jq-parser.svg" /></a>
-    <a href="http://golang.org" alt="Made With Go">
+    <a href="https://go.dev" alt="Made With Go">
         <img src="https://img.shields.io/github/go-mod/go-version/OpsLevel/opslevel-jq-parser" /></a>
     <a href="https://GitHub.com/OpsLevel/opslevel-jq-parser/releases/" alt="Release">
         <img src="https://img.shields.io/github/v/release/OpsLevel/opslevel-jq-parser?include_prereleases" /></a>

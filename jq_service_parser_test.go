@@ -277,11 +277,11 @@ func TestJQServiceParserSimpleConfig(t *testing.T) {
 	// property assignment
 	fmt.Println(service.Properties)
 	autopilot.Equals(t, 5, len(service.Properties))
-	autopilot.Equals(t, "true", string(service.Properties["prop_bool"]))
-	autopilot.Equals(t, "{}", string(service.Properties["prop_empty_object"]))
-	autopilot.Equals(t, "", string(service.Properties["prop_empty_string"]))
-	autopilot.Equals(t, `{"message":"hello world","condition":true}`, string(service.Properties["prop_object"]))
-	autopilot.Equals(t, "hello world", string(service.Properties["prop_string"]))
+	autopilot.Equals(t, "true", service.Properties["prop_bool"])
+	autopilot.Equals(t, "{}", service.Properties["prop_empty_object"])
+	autopilot.Equals(t, "", service.Properties["prop_empty_string"])
+	autopilot.Equals(t, `{"message":"hello world","condition":true}`, service.Properties["prop_object"])
+	autopilot.Equals(t, "hello world", service.Properties["prop_string"])
 }
 
 func TestJQServiceParserSampleConfig(t *testing.T) {
@@ -345,7 +345,7 @@ func BeveragesEqual(b1 []Beverage, b2 []Beverage) bool {
 }
 
 func TestDeduplicated(t *testing.T) {
-	emptyList := []Beverage{}
+	emptyList := make([]Beverage, 0)
 	emptyDedup := DeduplicatedBeverages(emptyList)
 	if !BeveragesEqual(emptyList, emptyDedup) {
 		t.Error("an empty list deduplicated should be equal to itself")
