@@ -48,6 +48,7 @@ tasks:
         silent: true
       - task: brew-install-jq
       - task: install-changie
+      - task: install-nilaway
       - task: install-gofumpt
       - task: install-golangci-lint
       - cmd: echo "Development tools installed!"
@@ -130,7 +131,7 @@ tasks:
     internal: true
     cmds:
       - task: go-install-tool
-        vars: { GO_TOOL: "changie", GO_TOOL_PATH: "go.uber.org/nilaway@latest" }
+        vars: { GO_TOOL: "nilaway", GO_TOOL_PATH: "go.uber.org/nilaway@latest" }
 
   install-gofumpt:
     desc: go install "gofumpt"
