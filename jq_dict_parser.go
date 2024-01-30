@@ -2,7 +2,6 @@ package opslevel_jq_parser
 
 import (
 	"fmt"
-	"strings"
 
 	libjq_go "github.com/flant/libjq-go"
 	"github.com/opslevel/opslevel-go/v2024"
@@ -41,24 +40,8 @@ func (p JQDictParser) Run(data string) (map[string]opslevel.JsonString, error) {
 			// jq will return "null". This is not the same as empty string. So in that case, skip the item.
 			continue
 		}
-		if strings.HasPrefix(jqRes, "{") && strings.HasSuffix(jqRes, "}") {
-			// TODO: this can be placed inside the NewJSONInput function in opslevel-go
-			// if the input given there is a string
-			schema, err := opslevel.NewJSONSchema(jqRes)
-			if err != nil {
-				log.Warn().Str("key", key).Err(err).Msg("error decoding object")
-				continue
-			}
-			schemaString := schema.AsString()
-			output[key] = opslevel.JsonString(schemaString)
-			continue
-		}
-		parsed, err := opslevel.NewJSONInput(jqRes)
-		if err != nil {
-			log.Warn().Str("key", key).Err(err).Msg("error decoding json")
-			continue
-		}
-		output[key] = *parsed
+		parsed := opslevel.JsonString(jqRes)
+		output[key] = parsed
 	}
 	return output, nil
 }
