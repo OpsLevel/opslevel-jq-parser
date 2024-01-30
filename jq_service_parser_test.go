@@ -275,7 +275,6 @@ func TestJQServiceParserSimpleConfig(t *testing.T) {
 	autopilot.Equals(t, 0, len(service.Tools))
 	autopilot.Equals(t, 0, len(service.Repositories))
 	// property assignment
-	fmt.Println(service.Properties)
 	autopilot.Equals(t, 5, len(service.Properties))
 	autopilot.Equals(t, "true", service.Properties["prop_bool"])
 	autopilot.Equals(t, "{}", service.Properties["prop_empty_object"])
