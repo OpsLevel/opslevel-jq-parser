@@ -11,8 +11,12 @@ env:
 tasks:
   ci:
     desc: Workflow to run in CI
+    deps:
+      - install-nilaway
+      - install-gofumpt
+      - install-golangci-lint
     cmds:
-      - task: setup
+      - task: workspace
       - task: has-latest-opslevel-go
       - which jq > /dev/null
       - task: lint
@@ -42,14 +46,10 @@ tasks:
     cmds:
       - cmd: echo "Installing development tools..."
         silent: true
-      - task: install-go-tool
-        vars: { GO_TOOL: "changie", GO_TOOL_PATH: "github.com/miniscruff/changie@latest" }
-      - task: install-go-tool
-        vars: { GO_TOOL: "gofumpt", GO_TOOL_PATH: "mvdan.cc/gofumpt@latest" }
-      - task: install-go-tool
-        vars: { GO_TOOL: "golangci-lint", GO_TOOL_PATH: "github.com/golangci/golangci-lint/cmd/golangci-lint@latest" }
-      - task: install-go-tool
-        vars: { GO_TOOL: "nilaway", GO_TOOL_PATH: "go.uber.org/nilaway/cmd/nilaway@latest" }
+      - task: brew-install-jq
+      - task: install-changie
+      - task: install-gofumpt
+      - task: install-golangci-lint
       - cmd: echo "Development tools installed!"
         silent: true
       - task: workspace
@@ -77,7 +77,7 @@ tasks:
   brew-install-jq:
     internal: true
     platforms: [darwin]
-    cmds: ["brew install jq"]
+    cmds: ["which jq > /dev/null || brew install jq"]
     preconditions:
       - sh: 'which brew'
         msg: '"brew" needed to install "jq"- see https://brew.sh'
@@ -117,6 +117,34 @@ tasks:
           echo "Run 'task lintfix' to get latest version"
           exit 1
         fi
+
+  install-changie:
+    desc: go install "changie"
+    internal: true
+    cmds:
+      - task: go-install-tool
+        vars: { GO_TOOL: "changie", GO_TOOL_PATH: "github.com/miniscruff/changie@latest" }
+
+  install-nilaway:
+    desc: go install "nilaway"
+    internal: true
+    cmds:
+      - task: go-install-tool
+        vars: { GO_TOOL: "changie", GO_TOOL_PATH: "go.uber.org/nilaway@latest" }
+
+  install-gofumpt:
+    desc: go install "gofumpt"
+    internal: true
+    cmds:
+      - task: go-install-tool
+        vars: { GO_TOOL: "gofumpt", GO_TOOL_PATH: "mvdan.cc/gofumpt@latest" }
+
+  install-golangci-lint:
+    desc: go install "golangci-lint"
+    internal: true
+    cmds:
+      - task: go-install-tool
+        vars: { GO_TOOL: "golangci-lint", GO_TOOL_PATH: "github.com/golangci/golangci-lint/cmd/golangci-lint@latest" }
 
   install-go-tool:
     desc: go install '{{.GO_TOOL}}' and set GOBIN if not set
