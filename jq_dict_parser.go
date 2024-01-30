@@ -14,8 +14,9 @@ func NewJQDictParser(dict map[string]string) map[string]JQFieldParser {
 	if dict == nil {
 		return output
 	}
+	jq := libjq_go.Jq()
 	for key, expression := range dict {
-		prg, err := libjq_go.Jq().Program(expression).Precompile()
+		prg, err := jq.Program(expression).Precompile()
 		if err != nil {
 			panic(fmt.Sprintf("unable to compile jq dict: %s", dict))
 		}
