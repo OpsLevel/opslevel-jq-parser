@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	libjq_go "github.com/flant/libjq-go"
-	"github.com/opslevel/opslevel-go/v2024"
 	"github.com/rs/zerolog/log"
 )
 
@@ -27,8 +26,8 @@ func NewJQDictParser(dict map[string]string) map[string]JQFieldParser {
 	return output
 }
 
-func (p JQDictParser) Run(data string) (map[string]opslevel.JsonString, error) {
-	output := make(map[string]opslevel.JsonString)
+func (p JQDictParser) Run(data string) (map[string]string, error) {
+	output := make(map[string]string)
 	for key, expression := range p {
 		jqRes, err := expression.Run(data)
 		if err != nil {
@@ -40,8 +39,7 @@ func (p JQDictParser) Run(data string) (map[string]opslevel.JsonString, error) {
 			// jq will return "null". This is not the same as empty string. So in that case, skip the item.
 			continue
 		}
-		parsed := opslevel.JsonString(jqRes)
-		output[key] = parsed
+		output[key] = jqRes
 	}
 	return output, nil
 }
