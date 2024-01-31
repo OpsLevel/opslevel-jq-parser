@@ -12,6 +12,7 @@ tasks:
   ci:
     desc: Workflow to run in CI
     deps:
+      - install-nilaway
       - install-gofumpt
       - install-golangci-lint
     cmds:
@@ -27,6 +28,7 @@ tasks:
     cmds:
       - test -z "$(gofumpt -d -e . | tee /dev/stderr)"
       - golangci-lint run
+      - nilaway -test=false -include-pkgs='github.com/opslevel/opslevel-jq-parser' ./...
 
   fix:
     desc: Fix formatting, linting, go.mod, and update submodule
@@ -37,6 +39,7 @@ tasks:
       - go get -u
       - go mod tidy
       - golangci-lint run --fix
+      - nilaway -fix -test=false -include-pkgs='github.com/opslevel/opslevel-jq-parser' ./...
 
   setup:
     desc: Setup linter, formatter, etc. for local testing and CI
@@ -45,6 +48,7 @@ tasks:
         silent: true
       - task: brew-install-jq
       - task: install-changie
+      - task: install-nilaway
       - task: install-gofumpt
       - task: install-golangci-lint
       - cmd: echo "Development tools installed!"
@@ -74,7 +78,7 @@ tasks:
   brew-install-jq:
     internal: true
     platforms: [darwin]
-    cmds: ["brew install jq"]
+    cmds: ["which jq > /dev/null || brew install jq"]
     preconditions:
       - sh: 'which brew'
         msg: '"brew" needed to install "jq"- see https://brew.sh'
@@ -122,6 +126,13 @@ tasks:
       - task: go-install-tool
         vars: { GO_TOOL: "changie", GO_TOOL_PATH: "github.com/miniscruff/changie@latest" }
 
+  install-nilaway:
+    desc: go install "nilaway"
+    internal: true
+    cmds:
+      - task: go-install-tool
+        vars: { GO_TOOL: "nilaway", GO_TOOL_PATH: "go.uber.org/nilaway/cmd/nilaway@latest" }
+
   install-gofumpt:
     desc: go install "gofumpt"
     internal: true
@@ -135,6 +146,21 @@ tasks:
     cmds:
       - task: go-install-tool
         vars: { GO_TOOL: "golangci-lint", GO_TOOL_PATH: "github.com/golangci/golangci-lint/cmd/golangci-lint@latest" }
+
+  install-go-tool:
+    desc: go install '{{.GO_TOOL}}' and set GOBIN if not set
+    internal: true
+    silent: true
+    vars:
+      IS_TOOL_INSTALLED:
+        sh: which {{.GO_TOOL}} > /dev/null || echo "1"
+    cmds:
+      - test -z "{{.IS_TOOL_INSTALLED}}" || echo "Installing {{.GO_TOOL}}..."
+      - test -z "{{.IS_TOOL_INSTALLED}}" || go install {{.GO_TOOL_PATH}}
+      - test -n $(go env GOBIN) || go env -w GOBIN=$(go env GOPATH)/bin
+      - echo "  '{{.GO_TOOL}}' is installed."
+    requires:
+      vars: [GO_TOOL, GO_TOOL_PATH]
 
   update-opslevel-go:
     desc: Update opslevel-go version to latest release
