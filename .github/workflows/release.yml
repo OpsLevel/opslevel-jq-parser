@@ -19,6 +19,10 @@ jobs:
           token: ${{ secrets.ORG_GITHUB_TOKEN }}
       - name: Fetch All Tags
         run: git fetch --force --tags
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
       - name: Import GPG Key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v6
