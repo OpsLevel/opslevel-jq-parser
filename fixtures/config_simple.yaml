@@ -1,0 +1,10 @@
+aliases:
+  - '"k8s:\(.metadata.name)-\(.metadata.namespace)"'
+name: .metadata.name
+owner: .metadata.namespace
+tags:
+  assign:
+    - '{"imported": "kubectl-opslevel"}'
+    - .metadata.labels
+  create:
+    - '{"environment": .spec.template.metadata.labels.environment}'

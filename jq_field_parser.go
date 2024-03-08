@@ -12,11 +12,10 @@ type JQFieldParser struct {
 }
 
 func NewJQFieldParser(expression string) JQFieldParser {
-	// TODO: why is this here? I think this will happen with the System config bug.
+	// if an expression is not set, use "empty" instead since a valid keyword is needed for the program to compile
 	if expression == "" {
 		expression = "empty"
 	}
-	// TODO: nil check on program?
 	program, err := libjq_go.Jq().Program(expression).Precompile()
 	if err != nil {
 		log.Panic().Err(err).Str("expression", expression).Msg("error compiling jq expression")
