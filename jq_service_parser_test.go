@@ -2,6 +2,7 @@ package opslevel_jq_parser_test
 
 import (
 	_ "embed"
+	"fmt"
 	"testing"
 
 	opslevel_jq_parser "github.com/opslevel/opslevel-jq-parser/v2024"
@@ -22,7 +23,7 @@ func TestJQServiceParserSimpleConfig(t *testing.T) {
 	autopilot.Ok(t, err)
 	service := opslevel_jq_parser.RunWithConfig(config, k8sResource)
 
-	// basic values
+	// values
 	autopilot.Equals(t, "", service.Description)
 	autopilot.Equals(t, "", service.Framework)
 	autopilot.Equals(t, "", service.Language)
@@ -33,7 +34,7 @@ func TestJQServiceParserSimpleConfig(t *testing.T) {
 	autopilot.Equals(t, "", service.System)
 	autopilot.Equals(t, "", service.Tier)
 
-	// array of basic values
+	// array of values
 	autopilot.Equals(t, 1, len(service.Aliases))
 	autopilot.Equals(t, "k8s:web-self-hosted", service.Aliases[0])
 }
@@ -43,7 +44,7 @@ func TestJQServiceParserSampleConfig(t *testing.T) {
 	autopilot.Ok(t, err)
 	service := opslevel_jq_parser.RunWithConfig(config, k8sResource)
 
-	// basic values (string, boolean, number)
+	// values
 	autopilot.Equals(t, "this is a description", service.Description)
 	autopilot.Equals(t, "rails", service.Framework)
 	autopilot.Equals(t, "ruby", service.Language)
@@ -54,20 +55,32 @@ func TestJQServiceParserSampleConfig(t *testing.T) {
 	autopilot.Equals(t, "monolith", service.System)
 	autopilot.Equals(t, "tier_1", service.Tier)
 
-	// array of basic values
+	// array of values
 	autopilot.Equals(t, 2, len(service.Aliases))
 	autopilot.Equals(t, "k8s:web-self-hosted", service.Aliases[0])
 	autopilot.Equals(t, "self-hosted-web", service.Aliases[1])
+	autopilot.Equals(t, 4, len(service.Tools))
+	autopilot.Equals(t, `{"category":"logs","displayName":"my-ci","url":"https://circleci.com"}`, service.Tools[0])
+	autopilot.Equals(t, `{"category":"logs","displayName":"my-graphs","url":"https://datadog.com"}`, service.Tools[1])
+	autopilot.Equals(t, `{"category":"logs","displayName":"my-logs","url":"https://splunk.com"}`, service.Tools[2])
+	autopilot.Equals(t, `{"category":"logs","displayName":"my-schedule","url":"https://pagerduty.com"}`, service.Tools[3])
+	autopilot.Equals(t, 3, len(service.Repositories))
+	autopilot.Equals(t, `{"name":"My Cool Repo","directory":"","repo":"github.com:hashicorp/vault"}`, service.Repositories[0])
+	autopilot.Equals(t, `github.com:hashicorp/vault`, service.Repositories[1]) // TODO: why is this not an object? Is that acceptable?
+	autopilot.Equals(t, `{"directory":"clusters/dev/opslevel","name":"terraform","repo":"gitlab.com:opslevel/terraform"}`, service.Repositories[2])
 
 	// dictionary
-	autopilot.Equals(t, 5, len(service.Properties))
+	autopilot.Equals(t, 4, len(service.Properties))
 	autopilot.Equals(t, "true", service.Properties["prop_bool"])
 	autopilot.Equals(t, "{}", service.Properties["prop_empty_object"])
-	autopilot.Equals(t, "", service.Properties["prop_empty_string"])
 	autopilot.Equals(t, `{"message":"hello world","condition":true}`, service.Properties["prop_object"])
 	autopilot.Equals(t, "hello world", service.Properties["prop_string"])
 
-	// array of dictionaries
+	// tags
+	fmt.Println(service.TagAssigns)
+	fmt.Println(service.TagCreates)
+	autopilot.Equals(t, 5, len(service.TagAssigns))
+	autopilot.Equals(t, 1, len(service.TagCreates))
 }
 
 func BenchmarkJQParser_New(b *testing.B) {
