@@ -1,9 +1,10 @@
 package opslevel_jq_parser_test
 
 import (
+	"testing"
+
 	opslevel_jq_parser "github.com/opslevel/opslevel-jq-parser/v2024"
 	"github.com/rocktavious/autopilot/v2023"
-	"testing"
 )
 
 var k8sResource = `{
@@ -247,7 +248,7 @@ func TestJQServiceParserSimpleConfig(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	parser := opslevel_jq_parser.NewJQServiceParser(*config)
+	parser := opslevel_jq_parser.NewJQServiceParser(config)
 	// Act
 	service, err := parser.Run(k8sResource)
 	if err != nil {
@@ -278,7 +279,7 @@ func TestJQServiceParserSampleConfig(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	parser := opslevel_jq_parser.NewJQServiceParser(*config)
+	parser := opslevel_jq_parser.NewJQServiceParser(config)
 	// Act
 	service, err := parser.Run(k8sResource)
 	if err != nil {
@@ -300,7 +301,7 @@ func TestJQServiceParserSampleConfig(t *testing.T) {
 
 func BenchmarkJQParser_New(b *testing.B) {
 	config, _ := opslevel_jq_parser.NewServiceRegistrationConfig(opslevel_jq_parser.SampleConfig)
-	parser := opslevel_jq_parser.NewJQServiceParser(*config)
+	parser := opslevel_jq_parser.NewJQServiceParser(config)
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {

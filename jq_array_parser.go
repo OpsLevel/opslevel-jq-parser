@@ -1,49 +1,53 @@
 package opslevel_jq_parser
 
-import (
-	"encoding/json"
-	"github.com/rs/zerolog/log"
-	"strings"
-)
+type JQArrayParser []JQFieldParser
 
-type JQArrayParser struct {
-	programs []*JQFieldParser
-}
-
-func NewJQArrayParser(expressions []string) *JQArrayParser {
-	programs := make([]*JQFieldParser, len(expressions))
+func NewJQArrayParser(expressions []string) JQArrayParser {
+	programs := make([]JQFieldParser, len(expressions))
 	for i, expression := range expressions {
 		programs[i] = NewJQFieldParser(expression)
 	}
-	return &JQArrayParser{
-		programs: programs,
-	}
+	return programs
 }
 
-func (p *JQArrayParser) Run(data string) ([]string, error) {
-	output := make([]string, 0, len(p.programs))
-	for _, program := range p.programs {
+func (p JQArrayParser) Run(data string) ([]string, error) {
+	output := make([]string, 0, len(p))
+	for _, program := range p {
 		response, err := program.Run(data)
 		if err != nil {
-			log.Warn().Err(err).Msgf("jq execution error from expression: %s", program.program.Program)
 			continue
 		}
-		if response == "" {
+		// TODO: explain why we are checking "" or "null" here.
+		if response == "" || response == "null" {
 			continue
 		}
-		if strings.HasPrefix(response, "[") && strings.HasSuffix(response, "]") {
-			var aliases []string
-			if err := json.Unmarshal([]byte(response), &aliases); err == nil {
-				for _, alias := range aliases {
-					if alias == "" {
-						continue
-					}
-					output = append(output, alias)
-				}
-			}
-		} else {
-			output = append(output, response)
-		}
+		output = append(output, response)
 	}
 	return output, nil
+}
+
+func (p JQArrayParser) RunDeduplicated(data string) ([]string, error) {
+	output := make(map[string]bool)
+	for _, program := range p {
+		response, err := program.Run(data)
+		if err != nil {
+			continue
+		}
+		// TODO: explain why we are checking "" or "null" here.
+		if response == "" || response == "null" {
+			continue
+		}
+		output[response] = true
+	}
+	return Keys(output), nil
+}
+
+// Keys returns the keys of the map m.
+// The keys will be in an indeterminate order.
+func Keys[M ~map[K]V, K comparable, V any](m M) []K {
+	r := make([]K, 0, len(m))
+	for k := range m {
+		r = append(r, k)
+	}
+	return r
 }

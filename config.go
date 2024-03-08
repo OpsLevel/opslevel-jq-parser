@@ -88,11 +88,11 @@ type ServiceRegistration struct {
 	Tier        string            `json:",omitempty"`
 }
 
-func NewServiceRegistrationConfig(data string) (*ServiceRegistrationConfig, error) {
+func NewServiceRegistrationConfig(data string) (ServiceRegistrationConfig, error) {
 	var output ServiceRegistrationConfig
 	err := yaml.Unmarshal([]byte(data), &output)
 	if err != nil {
-		return nil, err
+		return ServiceRegistrationConfig{}, err
 	}
-	return &output, nil
+	return output, nil
 }
