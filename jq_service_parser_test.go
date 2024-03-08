@@ -1,13 +1,9 @@
 package opslevel_jq_parser_test
 
 import (
-	"fmt"
-	"slices"
-	"testing"
-
-	"github.com/opslevel/opslevel-go/v2024"
 	opslevel_jq_parser "github.com/opslevel/opslevel-jq-parser/v2024"
 	"github.com/rocktavious/autopilot/v2023"
+	"testing"
 )
 
 var k8sResource = `{
@@ -265,16 +261,9 @@ func TestJQServiceParserSimpleConfig(t *testing.T) {
 	autopilot.Equals(t, "", service.Product)
 	autopilot.Equals(t, "", service.Language)
 	autopilot.Equals(t, "", service.Framework)
-	// autopilot.Equals(t, "", service.System)
+	autopilot.Equals(t, "", service.System)
 	autopilot.Equals(t, 1, len(service.Aliases))
 	autopilot.Equals(t, "k8s:web-self-hosted", service.Aliases[0])
-	autopilot.Equals(t, 1, len(service.TagCreates))
-	autopilot.Equals(t, opslevel.TagInput{Key: "environment", Value: "dev"}, service.TagCreates[0])
-	autopilot.Equals(t, 5, len(service.TagAssigns))
-	autopilot.Equals(t, opslevel.TagInput{Key: "imported", Value: "kubectl-opslevel"}, service.TagAssigns[0])
-	autopilot.Equals(t, 0, len(service.Tools))
-	autopilot.Equals(t, 0, len(service.Repositories))
-	// property assignment
 	autopilot.Equals(t, 5, len(service.Properties))
 	autopilot.Equals(t, "true", service.Properties["prop_bool"])
 	autopilot.Equals(t, "{}", service.Properties["prop_empty_object"])
@@ -289,7 +278,6 @@ func TestJQServiceParserSampleConfig(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-
 	parser := opslevel_jq_parser.NewJQServiceParser(*config)
 	// Act
 	service, err := parser.Run(k8sResource)
@@ -305,15 +293,9 @@ func TestJQServiceParserSampleConfig(t *testing.T) {
 	autopilot.Equals(t, "jklabs", service.Product)
 	autopilot.Equals(t, "ruby", service.Language)
 	autopilot.Equals(t, "rails", service.Framework)
-	// autopilot.Equals(t, "monolith", service.System)
+	autopilot.Equals(t, "monolith", service.System)
 	autopilot.Equals(t, "k8s:web-self-hosted", service.Aliases[0])
 	autopilot.Equals(t, "self-hosted-web", service.Aliases[1])
-	autopilot.Equals(t, 1, len(service.TagCreates))
-	autopilot.Equals(t, opslevel.TagInput{Key: "environment", Value: "dev"}, service.TagCreates[0])
-	autopilot.Equals(t, 5, len(service.TagAssigns))
-	autopilot.Equals(t, opslevel.TagInput{Key: "imported", Value: "kubectl-opslevel"}, service.TagAssigns[0])
-	autopilot.Equals(t, 4, len(service.Tools))
-	autopilot.Equals(t, 3, len(service.Repositories))
 }
 
 func BenchmarkJQParser_New(b *testing.B) {
@@ -323,63 +305,5 @@ func BenchmarkJQParser_New(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		_, _ = parser.Run(k8sResource)
-	}
-}
-
-type Beverage struct {
-	Name string
-	Oz   int
-}
-
-func DeduplicatedBeverages(objects []Beverage) []Beverage {
-	return opslevel_jq_parser.Deduplicated(objects, func(b Beverage) string {
-		return fmt.Sprintf("%s%d", b.Name, b.Oz)
-	})
-}
-
-func BeveragesEqual(b1 []Beverage, b2 []Beverage) bool {
-	return slices.EqualFunc(b1, b2, func(b1, b2 Beverage) bool {
-		return b1.Name == b2.Name && b1.Oz == b2.Oz
-	})
-}
-
-func TestDeduplicated(t *testing.T) {
-	emptyList := make([]Beverage, 0)
-	emptyDedup := DeduplicatedBeverages(emptyList)
-	if !BeveragesEqual(emptyList, emptyDedup) {
-		t.Error("an empty list deduplicated should be equal to itself")
-	}
-
-	oneElem := []Beverage{
-		{Name: "Energy Drink", Oz: 10},
-	}
-	oneElemDedup := DeduplicatedBeverages(oneElem)
-	if !BeveragesEqual(oneElem, oneElemDedup) {
-		t.Error("a single element list deduplicated should be equal to itself")
-	}
-
-	list := []Beverage{
-		{Name: "Soda", Oz: 12},
-		{Name: "Iced Tea", Oz: 12},
-		{Name: "Soda", Oz: 12},
-		{Name: "Soda", Oz: 12},
-		{Name: "Iced Tea", Oz: 12},
-		{Name: "Iced Tea", Oz: 24},
-		{Name: "Soda", Oz: 24},
-		{Name: "Energy Drink", Oz: 10},
-	}
-	listDedup := DeduplicatedBeverages(list)
-	listDedupExp := []Beverage{
-		{Name: "Soda", Oz: 12},
-		{Name: "Iced Tea", Oz: 12},
-		{Name: "Iced Tea", Oz: 24},
-		{Name: "Soda", Oz: 24},
-		{Name: "Energy Drink", Oz: 10},
-	}
-	if BeveragesEqual(list, listDedup) {
-		t.Error("long list deduplicated should NOT be equal to itself")
-	}
-	if !BeveragesEqual(listDedup, listDedupExp) {
-		t.Error("long list deduplicated should be equal to the expected list")
 	}
 }

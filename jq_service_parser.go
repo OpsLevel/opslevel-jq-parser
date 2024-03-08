@@ -1,38 +1,32 @@
 package opslevel_jq_parser
 
 type JQServiceParser struct {
-	aliases      *JQArrayParser
-	description  *JQFieldParser
-	framework    *JQFieldParser
-	language     *JQFieldParser
-	lifecycle    *JQFieldParser
-	name         *JQFieldParser
-	owner        *JQFieldParser
-	product      *JQFieldParser
-	properties   JQDictParser
-	repositories *JQRepositoryParser
-	system       *JQFieldParser
-	tags         *JQTagsParser
-	tier         *JQFieldParser
-	tools        *JQToolsParser
+	aliases     *JQArrayParser
+	description *JQFieldParser
+	framework   *JQFieldParser
+	language    *JQFieldParser
+	lifecycle   *JQFieldParser
+	name        *JQFieldParser
+	owner       *JQFieldParser
+	product     *JQFieldParser
+	properties  JQDictParser
+	system      *JQFieldParser
+	tier        *JQFieldParser
 }
 
 func NewJQServiceParser(cfg ServiceRegistrationConfig) *JQServiceParser {
 	return &JQServiceParser{
-		aliases:      NewJQArrayParser(cfg.Aliases),
-		description:  NewJQFieldParser(cfg.Description),
-		framework:    NewJQFieldParser(cfg.Framework),
-		language:     NewJQFieldParser(cfg.Language),
-		lifecycle:    NewJQFieldParser(cfg.Lifecycle),
-		name:         NewJQFieldParser(cfg.Name),
-		owner:        NewJQFieldParser(cfg.Owner),
-		product:      NewJQFieldParser(cfg.Product),
-		properties:   NewJQDictParser(cfg.Properties),
-		repositories: NewJQRepositoryParser(cfg.Repositories),
-		system:       NewJQFieldParser(cfg.System),
-		tags:         NewJQTagsParser(cfg.Tags),
-		tier:         NewJQFieldParser(cfg.Tier),
-		tools:        NewJQToolsParser(cfg.Tools),
+		aliases:     NewJQArrayParser(cfg.Aliases),
+		description: NewJQFieldParser(cfg.Description),
+		framework:   NewJQFieldParser(cfg.Framework),
+		language:    NewJQFieldParser(cfg.Language),
+		lifecycle:   NewJQFieldParser(cfg.Lifecycle),
+		name:        NewJQFieldParser(cfg.Name),
+		owner:       NewJQFieldParser(cfg.Owner),
+		product:     NewJQFieldParser(cfg.Product),
+		properties:  NewJQDictParser(cfg.Properties),
+		system:      NewJQFieldParser(cfg.System),
+		tier:        NewJQFieldParser(cfg.Tier),
 	}
 }
 
@@ -73,15 +67,7 @@ func (p *JQServiceParser) Run(json string) (*ServiceRegistration, error) {
 	if err != nil {
 		return nil, err
 	}
-	repositories, err := p.repositories.Run(json)
-	if err != nil {
-		return nil, err
-	}
 	system, err := p.system.Run(json)
-	if err != nil {
-		return nil, err
-	}
-	tagCreates, tagAssigns, err := p.tags.Run(json)
 	if err != nil {
 		return nil, err
 	}
@@ -89,39 +75,17 @@ func (p *JQServiceParser) Run(json string) (*ServiceRegistration, error) {
 	if err != nil {
 		return nil, err
 	}
-	tools, err := p.tools.Run(json)
-	if err != nil {
-		return nil, err
-	}
 	return &ServiceRegistration{
-		Aliases:      aliases,
-		Description:  description,
-		Framework:    framework,
-		Language:     language,
-		Lifecycle:    lifecycle,
-		Name:         name,
-		Owner:        owner,
-		Product:      product,
-		Properties:   properties,
-		Repositories: repositories,
-		System:       system,
-		TagAssigns:   tagAssigns,
-		TagCreates:   tagCreates,
-		Tier:         tier,
-		Tools:        tools,
+		Aliases:     aliases,
+		Description: description,
+		Framework:   framework,
+		Language:    language,
+		Lifecycle:   lifecycle,
+		Name:        name,
+		Owner:       owner,
+		Product:     product,
+		Properties:  properties,
+		System:      system,
+		Tier:        tier,
 	}, nil
-}
-
-func Deduplicated[T any](objects []T, keyFunc func(object T) string) []T {
-	out := make([]T, 0)
-	set := make(map[string]struct{})
-	for _, obj := range objects {
-		key := keyFunc(obj)
-		if _, ok := set[key]; ok {
-			continue
-		}
-		set[key] = struct{}{}
-		out = append(out, obj)
-	}
-	return out
 }
