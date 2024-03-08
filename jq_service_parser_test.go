@@ -17,17 +17,10 @@ var SimpleConfig string
 //go:embed fixtures/config_sample.yaml
 var SampleConfig string
 
-// TestJQServiceParserSimpleConfig tests a minimal config file that only parses a few attributes
 func TestJQServiceParserSimpleConfig(t *testing.T) {
 	config, err := opslevel_jq_parser.NewServiceRegistrationConfig(SimpleConfig)
-	if err != nil {
-		t.Error(err)
-	}
-	parser := opslevel_jq_parser.NewJQServiceParser(config)
-	service, err := parser.Run(k8sResource)
-	if err != nil {
-		t.Error(err)
-	}
+	autopilot.Ok(t, err)
+	service := opslevel_jq_parser.RunWithConfig(config, k8sResource)
 
 	// basic values
 	autopilot.Equals(t, "", service.Description)
@@ -45,17 +38,10 @@ func TestJQServiceParserSimpleConfig(t *testing.T) {
 	autopilot.Equals(t, "k8s:web-self-hosted", service.Aliases[0])
 }
 
-// TestJQServiceParserSampleConfig tests a complete config that parses all attributes
 func TestJQServiceParserSampleConfig(t *testing.T) {
 	config, err := opslevel_jq_parser.NewServiceRegistrationConfig(SampleConfig)
-	if err != nil {
-		t.Error(err)
-	}
-	parser := opslevel_jq_parser.NewJQServiceParser(config)
-	service, err := parser.Run(k8sResource)
-	if err != nil {
-		t.Error(err)
-	}
+	autopilot.Ok(t, err)
+	service := opslevel_jq_parser.RunWithConfig(config, k8sResource)
 
 	// basic values (string, boolean, number)
 	autopilot.Equals(t, "this is a description", service.Description)
@@ -86,10 +72,9 @@ func TestJQServiceParserSampleConfig(t *testing.T) {
 
 func BenchmarkJQParser_New(b *testing.B) {
 	config, _ := opslevel_jq_parser.NewServiceRegistrationConfig(SimpleConfig)
-	parser := opslevel_jq_parser.NewJQServiceParser(config)
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		_, _ = parser.Run(k8sResource)
+		_ = opslevel_jq_parser.RunWithConfig(config, k8sResource)
 	}
 }

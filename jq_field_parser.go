@@ -1,10 +1,10 @@
 package opslevel_jq_parser
 
 import (
+	"fmt"
+	libjq_go "github.com/flant/libjq-go"
 	"github.com/flant/libjq-go/pkg/jq"
 	"github.com/rs/zerolog/log"
-
-	"github.com/flant/libjq-go"
 )
 
 type JQFieldParser struct {
@@ -12,20 +12,25 @@ type JQFieldParser struct {
 }
 
 func NewJQFieldParser(expression string) JQFieldParser {
-	// if an expression is not set, use "empty" instead since a valid keyword is needed for the program to compile
 	if expression == "" {
 		expression = "empty"
+	} else {
+		expression = fmt.Sprintf("%s // empty", expression)
 	}
 	program, err := libjq_go.Jq().Program(expression).Precompile()
 	if err != nil {
-		log.Panic().Err(err).Str("expression", expression).Msg("error compiling jq expression")
+		log.Panic().Err(err).Msg("error from libjq-go")
 	}
 	return JQFieldParser{
 		program: program,
 	}
 }
 
-func (p JQFieldParser) Run(data string) (string, error) {
-	// TODO: explain why we are not checking "" or "null" here.
-	return p.program.RunRaw(data)
+func (p JQFieldParser) Run(data string) string {
+	result, err := p.program.RunRaw(data)
+	if err != nil {
+		log.Debug().Err(err).Msg("error from libjq-go")
+		return ""
+	}
+	return result
 }

@@ -9,12 +9,12 @@ name: .metadata.name
 owner: .metadata.annotations."opslevel.com/owner"
 product: .metadata.annotations."opslevel.com/product"
 properties:
-  prop_object: .metadata.annotations.prop_object
-  notfound: .metadata.annotations.notfound
-  notfound2: .metadata.annotations.notfound2
+  not_present: .metadata.annotations.not_present
+  not_present_2: .metadata.annotations.not_present_2
   prop_bool: .metadata.annotations.prop_bool
   prop_empty_object: .metadata.annotations.prop_empty_object
   prop_empty_string: .metadata.annotations.prop_empty_string
+  prop_object: .metadata.annotations.prop_object
   prop_string: .metadata.annotations.prop_string
 repositories:
   - '{"name": "My Cool Repo", "directory": "", "repo": .metadata.annotations.repo} | if .repo then . else empty end'
