@@ -1,0 +1,42 @@
+{
+    "aliases": [
+        "k8s:web-self-hosted",
+        "self-hosted-web"
+    ],
+    "description": "this is a description",
+    "framework": "rails",
+    "language": "ruby",
+    "lifecycle": "alpha",
+    "name": "web",
+    "owner": "velero",
+    "product": "jklabs",
+    "properties": {
+        "prop_bool": "true",
+        "prop_empty_object": "{}",
+        "prop_object": "{\"message\":\"hello world\",\"condition\":true}",
+        "prop_string": "hello world"
+    },
+    "repositories": [
+        "{\"name\":\"My Cool Repo\",\"directory\":\"\",\"repo\":\"github.com:hashicorp/vault\"}",
+        "github.com:hashicorp/vault",
+        "{\"directory\":\"clusters/dev/opslevel\",\"name\":\"terraform\",\"repo\":\"gitlab.com:opslevel/terraform\"}"
+    ],
+    "system": "monolith",
+    "tagAssigns": [
+        "{\"key\":\"imported\",\"value\":\"kubectl-opslevel\"}",
+        "{\"key\":\"app.kubernetes.io/instance\",\"value\":\"web\"}",
+        "{\"key\":\"app.kubernetes.io/part-of\",\"value\":\"opslevel\"}",
+        "{\"key\":\"kots.io/app-slug\",\"value\":\"opslevel\"}",
+        "{\"key\":\"kots.io/backup\",\"value\":\"velero\"}"
+    ],
+    "tagCreates": [
+        "{\"key\":\"environment\",\"value\":\"dev\"}"
+    ],
+    "tier": "tier_1",
+    "tools": [
+        "{\"category\":\"logs\",\"displayName\":\"my-ci\",\"url\":\"https://circleci.com\"}",
+        "{\"category\":\"logs\",\"displayName\":\"my-graphs\",\"url\":\"https://datadog.com\"}",
+        "{\"category\":\"logs\",\"displayName\":\"my-logs\",\"url\":\"https://splunk.com\"}",
+        "{\"category\":\"logs\",\"displayName\":\"my-schedule\",\"url\":\"https://pagerduty.com\"}"
+    ]
+}

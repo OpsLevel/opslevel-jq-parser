@@ -13,8 +13,8 @@ func RunWithConfig(cfg ServiceRegistrationConfig, json string) ServiceRegistrati
 		Properties:   NewJQDictParser(cfg.Properties).Run(json),
 		System:       NewJQFieldParser(cfg.System).Run(json),
 		Repositories: NewJQArrayParser(cfg.Repositories).Run(json),
-		TagAssigns:   NewJQArrayParser(cfg.Tags["assign"]).Run(json),
-		TagCreates:   NewJQArrayParser(cfg.Tags["create"]).Run(json),
+		TagAssigns:   NewJQTagsParser(cfg.Tags["assign"]).Run(json),
+		TagCreates:   NewJQTagsParser(cfg.Tags["create"]).Run(json),
 		Tier:         NewJQFieldParser(cfg.Tier).Run(json),
 		Tools:        NewJQArrayParser(cfg.Tools).Run(json),
 	}

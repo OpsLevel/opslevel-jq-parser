@@ -19,7 +19,7 @@ type ServiceRegistrationConfig struct {
 	Repositories []string            `json:"repositories,omitempty" yaml:"repositories,omitempty"`
 	System       string              `json:"system,omitempty" yaml:"system,omitempty"`
 	Tier         string              `json:"tier,omitempty" yaml:"tier,omitempty"`
-	Tags         map[string][]string `json:"tags" yaml:"tags"`
+	Tags         map[string][]string `json:"tags,omitempty" yaml:"tags,omitempty"`
 	Tools        []string            `json:"tools,omitempty" yaml:"tools,omitempty"`
 }
 
