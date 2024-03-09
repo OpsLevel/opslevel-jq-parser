@@ -1,12 +1,10 @@
 package opslevel_jq_parser
 
 import (
-	"cmp"
 	"encoding/json"
-	"slices"
-	"strings"
-
 	"github.com/opslevel/opslevel-go/v2024"
+	"github.com/opslevel/opslevel-jq-parser/v2024/orderedmap"
+	"strings"
 )
 
 type JQTagsParser struct {
@@ -29,54 +27,62 @@ func NewJQTagsParser(cfg TagRegistrationConfig) *JQTagsParser {
 	}
 }
 
+// TODO: handle me
+func IsObject(s string) bool {
+	if strings.HasPrefix(s, "{") && strings.HasSuffix(s, "}") {
+		return true
+	}
+	return false
+}
+
+// TODO: move me
+func IsArray(s string) bool {
+	if strings.HasPrefix(s, "[") && strings.HasSuffix(s, "]") {
+		return true
+	}
+	return false
+}
+
+// TODO: move me
+// TODO: comment case where this happens
+// TODO: define interface?
+func (p *JQTagsParser) handleObject(output *orderedmap.OrderedMap[opslevel.TagInput], toMap map[string]string) {
+	for k, v := range toMap {
+		tag := opslevel.TagInput{Key: k, Value: v}
+		output.Add(tag.Key+tag.Value, tag)
+	}
+}
+
+// TODO: return something compatible with tool registration?
+// parse looks for JSON objects inside expression results and converts every key value pair into an opslevel.TagInput
 func (p *JQTagsParser) parse(programs []*JQFieldParser, data string) []opslevel.TagInput {
-	output := make([]opslevel.TagInput, 0, len(programs))
+	output := orderedmap.New[opslevel.TagInput]()
 	for _, program := range programs {
 		response, err := program.Run(data)
-		if err != nil {
+		if err != nil || response == "" {
 			// TODO: log error
 			continue
 		}
-		if response == "" {
-			continue
-		}
 
-		if strings.HasPrefix(response, "[") && strings.HasSuffix(response, "]") {
-			var tags []map[string]string
-			if err := json.Unmarshal([]byte(response), &tags); err != nil {
-				// TODO: log error
+		if IsObject(response) {
+			var toMap map[string]string
+			err = json.Unmarshal([]byte(response), &toMap)
+			if err != nil {
 				continue
 			}
-			for _, item := range tags {
-				for key, value := range item {
-					if key == "" || value == "" {
-						// TODO: log warning
-						continue
-					}
-					output = append(output, opslevel.TagInput{Key: key, Value: value})
-				}
-			}
-		}
-		if strings.HasPrefix(response, "{") && strings.HasSuffix(response, "}") {
-			var tags map[string]string
-			if err := json.Unmarshal([]byte(response), &tags); err != nil {
-				// TODO: log error
+			p.handleObject(output, toMap)
+		} else if IsArray(response) {
+			var toSlice []map[string]string
+			err = json.Unmarshal([]byte(response), &toSlice)
+			if err != nil {
 				continue
 			}
-			for key, value := range tags {
-				if key == "" || value == "" {
-					// TODO: log warning
-					continue
-				}
-				output = append(output, opslevel.TagInput{Key: key, Value: value})
+			for _, item := range toSlice {
+				p.handleObject(output, item)
 			}
 		}
 	}
-	// TODO: fix this hack to make the hashmap keys order be consistent (needed for testing.)
-	slices.SortFunc(output, func(a, b opslevel.TagInput) int {
-		return cmp.Compare(a.Key+a.Value, b.Key+b.Value)
-	})
-	return output
+	return output.Values()
 }
 
 func (p *JQTagsParser) Run(data string) ([]opslevel.TagInput, []opslevel.TagInput, error) {

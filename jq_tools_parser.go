@@ -3,9 +3,9 @@ package opslevel_jq_parser
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
-
+	"github.com/mitchellh/mapstructure"
 	"github.com/opslevel/opslevel-go/v2024"
+	"github.com/opslevel/opslevel-jq-parser/v2024/orderedmap"
 	"github.com/rs/zerolog/log"
 )
 
@@ -23,48 +23,57 @@ func NewJQToolsParser(expressions []string) *JQToolsParser {
 	}
 }
 
-func (p *JQToolsParser) Fetch(data string) ([]opslevel.ToolCreateInput, error) {
-	output := make([]opslevel.ToolCreateInput, 0, len(p.programs))
-	for _, program := range p.programs {
-		response, err := program.Run(data)
-		if err != nil {
-			log.Warn().Msgf("unable to parse alias from expression: %s", program.program.Program)
-			return nil, err
-		}
-		if response == "" {
-			continue
-		}
-		// TODO: response can be []map[string]string also
-		if strings.HasPrefix(response, "[") && strings.HasSuffix(response, "]") {
-			var tools []opslevel.ToolCreateInput
-			if err := json.Unmarshal([]byte(response), &tools); err != nil {
-				log.Err(err).Msgf("unable to parse expression: %s", program.program.Program)
-				continue
-			}
-			output = append(output, tools...)
-		} else {
-			var tool opslevel.ToolCreateInput
-			if err := json.Unmarshal([]byte(response), &tool); err != nil {
-				log.Err(err).Msgf("unable to parse expression: %s", program.program.Program)
-				continue
-			}
-			output = append(output, tool)
+// TODO: test me
+// TODO: move me
+func MapHasKeys[T any](m map[string]T, keys ...string) bool {
+	for _, k := range keys {
+		if _, ok := m[k]; !ok {
+			return false
 		}
 	}
-	return output, nil
+	return true
 }
 
-func (p *JQToolsParser) Run(data string) ([]opslevel.ToolCreateInput, error) {
-	result, err := p.Fetch(data)
+// TODO: move me
+// TODO: comment case where this happens
+// TODO: define interface?
+func (p *JQToolsParser) handleObject(output *orderedmap.OrderedMap[opslevel.ToolCreateInput], toMap map[string]string) {
+	var tool opslevel.ToolCreateInput
+	err := mapstructure.Decode(toMap, &tool)
 	if err != nil {
-		return nil, err
+		fmt.Println(err)
+		return
 	}
-	result = Deduplicated(result, func(tool opslevel.ToolCreateInput) string {
-		toolEnv := ""
-		if tool.Environment != nil {
-			toolEnv = *tool.Environment
+	output.Add(fmt.Sprintf("%s%s%v", tool.Category, tool.DisplayName, tool.Environment), tool)
+}
+
+// TODO: this does not need an error...
+func (p *JQToolsParser) Run(data string) ([]opslevel.ToolCreateInput, error) {
+	output := orderedmap.New[opslevel.ToolCreateInput]()
+	for _, program := range p.programs {
+		response, err := program.Run(data)
+		if err != nil || response == "" {
+			log.Warn().Msgf("unable to parse alias from expression: %s", program.program.Program)
+			continue
 		}
-		return fmt.Sprintf("%s%s%s", tool.Category, tool.DisplayName, toolEnv)
-	})
-	return result, nil
+
+		if IsObject(response) {
+			var toMap map[string]string
+			err = json.Unmarshal([]byte(response), &toMap)
+			if err != nil {
+				continue
+			}
+			p.handleObject(output, toMap)
+		} else if IsArray(response) {
+			var toSlice []map[string]string
+			err = json.Unmarshal([]byte(response), &toSlice)
+			if err != nil {
+				continue
+			}
+			for _, item := range toSlice {
+				p.handleObject(output, item)
+			}
+		}
+	}
+	return output.Values(), nil
 }
