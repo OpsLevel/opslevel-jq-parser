@@ -30,21 +30,21 @@ type ServiceRegistrationConfig struct {
 
 // ServiceRegistration represents the parsed json data from a ServiceRegistrationConfig
 type ServiceRegistration struct {
-	Aliases      []string                                `json:",omitempty"`
-	Description  string                                  `json:",omitempty"`
-	Framework    string                                  `json:",omitempty"`
-	Language     string                                  `json:",omitempty"`
-	Lifecycle    string                                  `json:",omitempty"`
-	Name         string                                  `json:",omitempty"`
-	Owner        string                                  `json:",omitempty"`
-	Product      string                                  `json:",omitempty"`
-	Properties   map[string]string                       `json:",omitempty"`
-	Repositories []opslevel.ServiceRepositoryCreateInput `json:",omitempty"` // This is a concrete class so fields are validated during `service preview`
-	System       string                                  `json:",omitempty"`
-	TagAssigns   []opslevel.TagInput                     `json:",omitempty"`
-	TagCreates   []opslevel.TagInput                     `json:",omitempty"`
-	Tier         string                                  `json:",omitempty"`
-	Tools        []opslevel.ToolCreateInput              `json:",omitempty"` // This is a concrete class so fields are validated during `service preview`
+	Aliases      []string                                `json:"aliases,omitempty"`
+	Description  string                                  `json:"description,omitempty"`
+	Framework    string                                  `json:"framework,omitempty"`
+	Language     string                                  `json:"language,omitempty"`
+	Lifecycle    string                                  `json:"lifecycle,omitempty"`
+	Name         string                                  `json:"name,omitempty"`
+	Owner        string                                  `json:"owner,omitempty"`
+	Product      string                                  `json:"product,omitempty"`
+	Properties   map[string]string                       `json:"properties,omitempty"`
+	Repositories []opslevel.ServiceRepositoryCreateInput `json:"repositories,omitempty"` // This is a concrete class so fields are validated during `service preview`
+	System       string                                  `json:"system,omitempty"`
+	TagAssigns   []opslevel.TagInput                     `json:"tagAssigns,omitempty"`
+	TagCreates   []opslevel.TagInput                     `json:"tagCreates,omitempty"`
+	Tier         string                                  `json:"tier,omitempty"`
+	Tools        []opslevel.ToolCreateInput              `json:"tools,omitempty"` // This is a concrete class so fields are validated during `service preview`
 }
 
 func NewServiceRegistrationConfig(data string) (*ServiceRegistrationConfig, error) {

@@ -11,11 +11,9 @@
         "prop_object": "{\"message\":\"hello world\",\"condition\":true}",
         "prop_string": "hello world"
     },
+    "repositories": [],
     "tagAssigns": [
-        {
-            "key": "imported",
-            "value": "kubectl-opslevel"
-        },
+
         {
             "key": "app.kubernetes.io/instance",
             "value": "web"
@@ -23,6 +21,10 @@
         {
             "key": "app.kubernetes.io/part-of",
             "value": "opslevel"
+        },
+        {
+            "key": "imported",
+            "value": "kubectl-opslevel"
         },
         {
             "key": "kots.io/app-slug",
@@ -38,5 +40,6 @@
             "key": "environment",
             "value": "dev"
         }
-    ]
+    ],
+    "tools": []
 }
