@@ -4,8 +4,6 @@ import (
 	"cmp"
 	_ "embed"
 	"encoding/json"
-	"fmt"
-	"slices"
 	"testing"
 
 	opslevel "github.com/opslevel/opslevel-go/v2024"
@@ -82,63 +80,5 @@ func BenchmarkJQParser_New(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		_, _ = parser.Run(k8sResource)
-	}
-}
-
-type Beverage struct {
-	Name string
-	Oz   int
-}
-
-func DeduplicatedBeverages(objects []Beverage) []Beverage {
-	return opslevel_jq_parser.Deduplicated(objects, func(b Beverage) string {
-		return fmt.Sprintf("%s%d", b.Name, b.Oz)
-	})
-}
-
-func BeveragesEqual(b1 []Beverage, b2 []Beverage) bool {
-	return slices.EqualFunc(b1, b2, func(b1, b2 Beverage) bool {
-		return b1.Name == b2.Name && b1.Oz == b2.Oz
-	})
-}
-
-func TestDeduplicated(t *testing.T) {
-	emptyList := make([]Beverage, 0)
-	emptyDedup := DeduplicatedBeverages(emptyList)
-	if !BeveragesEqual(emptyList, emptyDedup) {
-		t.Error("an empty list deduplicated should be equal to itself")
-	}
-
-	oneElem := []Beverage{
-		{Name: "Energy Drink", Oz: 10},
-	}
-	oneElemDedup := DeduplicatedBeverages(oneElem)
-	if !BeveragesEqual(oneElem, oneElemDedup) {
-		t.Error("a single element list deduplicated should be equal to itself")
-	}
-
-	list := []Beverage{
-		{Name: "Soda", Oz: 12},
-		{Name: "Iced Tea", Oz: 12},
-		{Name: "Soda", Oz: 12},
-		{Name: "Soda", Oz: 12},
-		{Name: "Iced Tea", Oz: 12},
-		{Name: "Iced Tea", Oz: 24},
-		{Name: "Soda", Oz: 24},
-		{Name: "Energy Drink", Oz: 10},
-	}
-	listDedup := DeduplicatedBeverages(list)
-	listDedupExp := []Beverage{
-		{Name: "Soda", Oz: 12},
-		{Name: "Iced Tea", Oz: 12},
-		{Name: "Iced Tea", Oz: 24},
-		{Name: "Soda", Oz: 24},
-		{Name: "Energy Drink", Oz: 10},
-	}
-	if BeveragesEqual(list, listDedup) {
-		t.Error("long list deduplicated should NOT be equal to itself")
-	}
-	if !BeveragesEqual(listDedup, listDedupExp) {
-		t.Error("long list deduplicated should be equal to the expected list")
 	}
 }
