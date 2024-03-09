@@ -1,0 +1,42 @@
+{
+    "aliases": [
+        "k8s:web-self-hosted"
+    ],
+    "name": "web",
+    "owner": "self-hosted",
+    "properties": {
+        "prop_bool": "true",
+        "prop_empty_object": "{}",
+        "prop_empty_string": "",
+        "prop_object": "{\"message\":\"hello world\",\"condition\":true}",
+        "prop_string": "hello world"
+    },
+    "tagAssigns": [
+        {
+            "key": "imported",
+            "value": "kubectl-opslevel"
+        },
+        {
+            "key": "app.kubernetes.io/instance",
+            "value": "web"
+        },
+        {
+            "key": "app.kubernetes.io/part-of",
+            "value": "opslevel"
+        },
+        {
+            "key": "kots.io/app-slug",
+            "value": "opslevel"
+        },
+        {
+            "key": "kots.io/backup",
+            "value": "velero"
+        }
+    ],
+    "tagCreates": [
+        {
+            "key": "environment",
+            "value": "dev"
+        }
+    ]
+}
