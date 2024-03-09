@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/mitchellh/mapstructure"
 	"github.com/opslevel/opslevel-go/v2024"
-	"github.com/opslevel/opslevel-jq-parser/v2024/orderedmap"
+	"github.com/opslevel/opslevel-jq-parser/v2024/common"
 	"github.com/rs/zerolog/log"
 )
 
@@ -23,21 +23,7 @@ func NewJQToolsParser(expressions []string) *JQToolsParser {
 	}
 }
 
-// TODO: test me
-// TODO: move me
-func MapHasKeys[T any](m map[string]T, keys ...string) bool {
-	for _, k := range keys {
-		if _, ok := m[k]; !ok {
-			return false
-		}
-	}
-	return true
-}
-
-// TODO: move me
-// TODO: comment case where this happens
-// TODO: define interface?
-func (p *JQToolsParser) handleObject(output *orderedmap.OrderedMap[opslevel.ToolCreateInput], toMap map[string]string) {
+func (p *JQToolsParser) handleObject(output common.UniqueMap[opslevel.ToolCreateInput], toMap map[string]string) {
 	var tool opslevel.ToolCreateInput
 	err := mapstructure.Decode(toMap, &tool)
 	if err != nil {
@@ -47,9 +33,8 @@ func (p *JQToolsParser) handleObject(output *orderedmap.OrderedMap[opslevel.Tool
 	output.Add(fmt.Sprintf("%s%s%v", tool.Category, tool.DisplayName, tool.Environment), tool)
 }
 
-// TODO: this does not need an error...
 func (p *JQToolsParser) Run(data string) ([]opslevel.ToolCreateInput, error) {
-	output := orderedmap.New[opslevel.ToolCreateInput]()
+	output := make(common.UniqueMap[opslevel.ToolCreateInput])
 	for _, program := range p.programs {
 		response, err := program.Run(data)
 		if err != nil || response == "" {
@@ -57,14 +42,14 @@ func (p *JQToolsParser) Run(data string) ([]opslevel.ToolCreateInput, error) {
 			continue
 		}
 
-		if IsObject(response) {
+		if common.Object(response) {
 			var toMap map[string]string
 			err = json.Unmarshal([]byte(response), &toMap)
 			if err != nil {
 				continue
 			}
 			p.handleObject(output, toMap)
-		} else if IsArray(response) {
+		} else if common.Array(response) {
 			var toSlice []map[string]string
 			err = json.Unmarshal([]byte(response), &toSlice)
 			if err != nil {
