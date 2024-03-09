@@ -39,7 +39,6 @@ func (p *JQTagsParser) parse(programs []*JQFieldParser, data string) []opslevel.
 	for _, program := range programs {
 		response, err := program.Run(data)
 		if err != nil || response == "" {
-			// TODO: log error
 			continue
 		}
 
