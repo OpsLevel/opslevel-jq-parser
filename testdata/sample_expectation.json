@@ -46,8 +46,20 @@
             "value": "opslevel"
         },
         {
+            "key": "has_rbac",
+            "value": "yes"
+        },
+        {
+            "key": "has_runtime",
+            "value": "no"
+        },
+        {
             "key": "imported",
             "value": "kubectl-opslevel"
+        },
+        {
+            "key": "is_fork",
+            "value": "no"
         },
         {
             "key": "kots.io/app-slug",
@@ -56,6 +68,10 @@
         {
             "key": "kots.io/backup",
             "value": "velero"
+        },
+        {
+            "key": "monolithic",
+            "value": "yes"
         }
     ],
     "tagCreates": [
