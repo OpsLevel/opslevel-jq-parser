@@ -32,7 +32,7 @@
                 "alias": "gitlab.com:opslevel/terraform-dev"
             },
             "baseDirectory": "clusters/dev/opslevel",
-            "displayName": "terraform-dev"
+            "displayName": "terraform-development"
         },
         {
             "service": null,
@@ -40,7 +40,7 @@
                 "alias": "gitlab.com:opslevel/terraform-prod"
             },
             "baseDirectory": "clusters/prod/opslevel",
-            "displayName": "terraform-prod"
+            "displayName": "terraform-production"
         },
         {
             "service": null,

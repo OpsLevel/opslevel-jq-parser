@@ -13,10 +13,6 @@
     "repositories": [],
     "tagAssigns": [
         {
-            "key": "imported",
-            "value": "kubectl-opslevel"
-        },
-        {
             "key": "app.kubernetes.io/instance",
             "value": "web"
         },
@@ -24,7 +20,10 @@
             "key": "app.kubernetes.io/part-of",
             "value": "opslevel"
         },
-
+        {
+            "key": "imported",
+            "value": "kubectl-opslevel"
+        },
         {
             "key": "kots.io/app-slug",
             "value": "opslevel"
