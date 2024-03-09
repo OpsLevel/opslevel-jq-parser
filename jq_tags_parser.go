@@ -3,8 +3,7 @@ package opslevel_jq_parser
 import (
 	"encoding/json"
 	"github.com/opslevel/opslevel-go/v2024"
-	"github.com/opslevel/opslevel-jq-parser/v2024/orderedmap"
-	"strings"
+	"github.com/opslevel/opslevel-jq-parser/v2024/common"
 )
 
 type JQTagsParser struct {
@@ -27,36 +26,16 @@ func NewJQTagsParser(cfg TagRegistrationConfig) *JQTagsParser {
 	}
 }
 
-// TODO: handle me
-func IsObject(s string) bool {
-	if strings.HasPrefix(s, "{") && strings.HasSuffix(s, "}") {
-		return true
-	}
-	return false
-}
-
-// TODO: move me
-func IsArray(s string) bool {
-	if strings.HasPrefix(s, "[") && strings.HasSuffix(s, "]") {
-		return true
-	}
-	return false
-}
-
-// TODO: move me
-// TODO: comment case where this happens
-// TODO: define interface?
-func (p *JQTagsParser) handleObject(output *orderedmap.OrderedMap[opslevel.TagInput], toMap map[string]string) {
+func (p *JQTagsParser) handleObject(output common.UniqueMap[opslevel.TagInput], toMap map[string]string) {
 	for k, v := range toMap {
 		tag := opslevel.TagInput{Key: k, Value: v}
 		output.Add(tag.Key+tag.Value, tag)
 	}
 }
 
-// TODO: return something compatible with tool registration?
 // parse looks for JSON objects inside expression results and converts every key value pair into an opslevel.TagInput
 func (p *JQTagsParser) parse(programs []*JQFieldParser, data string) []opslevel.TagInput {
-	output := orderedmap.New[opslevel.TagInput]()
+	output := make(common.UniqueMap[opslevel.TagInput])
 	for _, program := range programs {
 		response, err := program.Run(data)
 		if err != nil || response == "" {
@@ -64,14 +43,14 @@ func (p *JQTagsParser) parse(programs []*JQFieldParser, data string) []opslevel.
 			continue
 		}
 
-		if IsObject(response) {
+		if common.Object(response) {
 			var toMap map[string]string
 			err = json.Unmarshal([]byte(response), &toMap)
 			if err != nil {
 				continue
 			}
 			p.handleObject(output, toMap)
-		} else if IsArray(response) {
+		} else if common.Array(response) {
 			var toSlice []map[string]string
 			err = json.Unmarshal([]byte(response), &toSlice)
 			if err != nil {
