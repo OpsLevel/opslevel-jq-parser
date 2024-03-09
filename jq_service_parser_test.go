@@ -4,6 +4,8 @@ import (
 	"cmp"
 	_ "embed"
 	"encoding/json"
+	"github.com/opslevel/opslevel-go/v2024"
+	"slices"
 	"testing"
 
 	opslevel "github.com/opslevel/opslevel-go/v2024"
@@ -68,6 +70,11 @@ func TestJQServiceParser(t *testing.T) {
 			sortSlices(&expectedService)
 
 			autopilot.Ok(t, err)
+
+			// order of the slices does not matter - JSON marshal will output struct keys in order defined in the struct
+			// so before comparing, sort the slices
+			sortSlices(service)
+			sortSlices(&expectedService)
 			autopilot.Equals(t, expectedService, *service)
 		})
 	}

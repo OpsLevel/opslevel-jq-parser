@@ -29,10 +29,26 @@
         {
             "service": null,
             "repository": {
-                "alias": "gitlab.com:opslevel/terraform"
+                "alias": "gitlab.com:opslevel/terraform-dev"
             },
             "baseDirectory": "clusters/dev/opslevel",
-            "displayName": "terraform"
+            "displayName": "terraform-dev"
+        },
+        {
+            "service": null,
+            "repository": {
+                "alias": "gitlab.com:opslevel/terraform-prod"
+            },
+            "baseDirectory": "clusters/prod/opslevel",
+            "displayName": "terraform-prod"
+        },
+        {
+            "service": null,
+            "repository": {
+                "alias": "gitlab.com:opslevel/terraform-staging"
+            },
+            "baseDirectory": "clusters/staging/opslevel",
+            "displayName": "terraform-staging"
         }
     ],
     "system": "monolith",
