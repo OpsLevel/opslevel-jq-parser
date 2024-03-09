@@ -26,16 +26,16 @@ func NewJQDictParser(dict map[string]string) map[string]JQFieldParser {
 	return output
 }
 
-func (p JQDictParser) Run(data string) (map[string]string, error) {
+func (p JQDictParser) Run(data string) map[string]string {
 	output := make(map[string]string)
 	for key, expression := range p {
-		jqRes, err := expression.Run(data)
-		if err != nil || jqRes == "null" {
+		jqRes := expression.Run(data)
+		if jqRes == "null" {
 			// in the case that the expression returned nothing (happens in the case where the key was not found)
 			// jq will return "null". This is not the same as empty string. So in that case, skip the item.
 			continue
 		}
 		output[key] = jqRes
 	}
-	return output, nil
+	return output
 }

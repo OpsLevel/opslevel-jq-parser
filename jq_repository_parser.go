@@ -35,12 +35,12 @@ func NewJQRepositoryParser(expressions []string) *JQRepositoryParser {
 	}
 }
 
-func (p *JQRepositoryParser) Run(data string) ([]opslevel.ServiceRepositoryCreateInput, error) {
+func (p *JQRepositoryParser) Run(data string) []opslevel.ServiceRepositoryCreateInput {
 	output := make([]opslevel.ServiceRepositoryCreateInput, 0, len(p.programs))
 	for _, program := range p.programs {
-		response, err := program.Run(data)
-		if err != nil || response == "" {
-			return nil, err
+		response := program.Run(data)
+		if response == "" {
+			continue
 		}
 		if strings.HasPrefix(response, "[") && strings.HasSuffix(response, "]") {
 			if response == "[]" {
@@ -71,5 +71,5 @@ func (p *JQRepositoryParser) Run(data string) ([]opslevel.ServiceRepositoryCreat
 		}
 
 	}
-	return output, nil
+	return output
 }

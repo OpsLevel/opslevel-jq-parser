@@ -47,8 +47,8 @@ type ServiceRegistration struct {
 	Tools        []opslevel.ToolCreateInput              `json:"tools,omitempty"` // This is a concrete class so fields are validated during `service preview`
 }
 
-func NewServiceRegistrationConfig(data string) (*ServiceRegistrationConfig, error) {
+func NewServiceRegistrationConfig(data string) (ServiceRegistrationConfig, error) {
 	var output ServiceRegistrationConfig
 	err := yaml.Unmarshal([]byte(data), &output)
-	return &output, err
+	return output, err
 }
