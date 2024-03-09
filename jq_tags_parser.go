@@ -72,7 +72,7 @@ func (p *JQTagsParser) parse(programs []*JQFieldParser, data string) []opslevel.
 			}
 		}
 	}
-	// TODO: fix this hack to make the hashmap keys be consistent
+	// TODO: fix this hack to make the hashmap keys order be consistent (needed for testing.)
 	slices.SortFunc(output, func(a, b opslevel.TagInput) int {
 		return cmp.Compare(a.Key+a.Value, b.Key+b.Value)
 	})

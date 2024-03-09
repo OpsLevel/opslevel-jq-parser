@@ -12,7 +12,6 @@
     },
     "repositories": [],
     "tagAssigns": [
-
         {
             "key": "app.kubernetes.io/instance",
             "value": "web"
