@@ -36,78 +36,23 @@ func NewJQServiceParser(cfg ServiceRegistrationConfig) *JQServiceParser {
 	}
 }
 
-func (p *JQServiceParser) Run(json string) (*ServiceRegistration, error) {
-	aliases, err := p.aliases.Run(json)
-	if err != nil {
-		return nil, err
-	}
-	description, err := p.description.Run(json)
-	if err != nil {
-		return nil, err
-	}
-	framework, err := p.framework.Run(json)
-	if err != nil {
-		return nil, err
-	}
-	language, err := p.language.Run(json)
-	if err != nil {
-		return nil, err
-	}
-	lifecycle, err := p.lifecycle.Run(json)
-	if err != nil {
-		return nil, err
-	}
-	name, err := p.name.Run(json)
-	if err != nil {
-		return nil, err
-	}
-	owner, err := p.owner.Run(json)
-	if err != nil {
-		return nil, err
-	}
-	product, err := p.product.Run(json)
-	if err != nil {
-		return nil, err
-	}
-	properties, err := p.properties.Run(json)
-	if err != nil {
-		return nil, err
-	}
-	repositories, err := p.repositories.Run(json)
-	if err != nil {
-		return nil, err
-	}
-	system, err := p.system.Run(json)
-	if err != nil {
-		return nil, err
-	}
-	tagCreates, tagAssigns, err := p.tags.Run(json)
-	if err != nil {
-		return nil, err
-	}
-	tier, err := p.tier.Run(json)
-	if err != nil {
-		return nil, err
-	}
-	tools, err := p.tools.Run(json)
-	if err != nil {
-		return nil, err
-	}
-	return &ServiceRegistration{
-		Aliases:      aliases,
-		Description:  description,
-		Framework:    framework,
-		Language:     language,
-		Lifecycle:    lifecycle,
-		Name:         name,
-		Owner:        owner,
-		Product:      product,
-		Properties:   properties,
-		Repositories: repositories,
-		System:       system,
+func (p *JQServiceParser) Run(json string) ServiceRegistration {
+	tagCreates, tagAssigns := p.tags.Run(json)
+	return ServiceRegistration{
+		Aliases:      p.aliases.Run(json),
+		Description:  p.description.Run(json),
+		Framework:    p.framework.Run(json),
+		Language:     p.language.Run(json),
+		Lifecycle:    p.lifecycle.Run(json),
+		Name:         p.name.Run(json),
+		Owner:        p.owner.Run(json),
+		Product:      p.product.Run(json),
+		Properties:   p.properties.Run(json),
+		Repositories: p.repositories.Run(json),
+		System:       p.system.Run(json),
 		TagAssigns:   tagAssigns,
 		TagCreates:   tagCreates,
-		Tier:         tier,
-		Tools:        tools,
-	}, nil
+		Tier:         p.tier.Run(json),
+		Tools:        p.tools.Run(json),
+	}
 }

@@ -32,24 +32,24 @@ func (p *JQToolsParser) handleObject(output common.UniqueMap[opslevel.ToolCreate
 	output.Add(fmt.Sprintf("%s%s%v", tool.Category, tool.DisplayName, tool.Environment), tool)
 }
 
-func (p *JQToolsParser) Run(data string) ([]opslevel.ToolCreateInput, error) {
+func (p *JQToolsParser) Run(data string) []opslevel.ToolCreateInput {
 	output := make(common.UniqueMap[opslevel.ToolCreateInput])
 	for _, program := range p.programs {
-		response, err := program.Run(data)
-		if err != nil || response == "" {
+		response := program.Run(data)
+		if response == "" {
 			continue
 		}
 
 		if common.Object(response) {
 			var toMap map[string]string
-			err = json.Unmarshal([]byte(response), &toMap)
+			err := json.Unmarshal([]byte(response), &toMap)
 			if err != nil {
 				continue
 			}
 			p.handleObject(output, toMap)
 		} else if common.Array(response) {
 			var toSlice []map[string]string
-			err = json.Unmarshal([]byte(response), &toSlice)
+			err := json.Unmarshal([]byte(response), &toSlice)
 			if err != nil {
 				continue
 			}
@@ -58,5 +58,5 @@ func (p *JQToolsParser) Run(data string) ([]opslevel.ToolCreateInput, error) {
 			}
 		}
 	}
-	return output.Values(), nil
+	return output.Values()
 }

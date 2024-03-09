@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	libjq_go "github.com/flant/libjq-go"
-	"github.com/rs/zerolog/log"
 )
 
 type JQDictParser map[string]JQFieldParser
@@ -28,18 +27,14 @@ func NewJQDictParser(dict map[string]string) map[string]JQFieldParser {
 	return output
 }
 
-func (p JQDictParser) Run(data string) (map[string]string, error) {
+func (p JQDictParser) Run(data string) map[string]string {
 	output := make(map[string]string)
 	for key, expression := range p {
-		jqRes, err := expression.Run(data)
-		if err != nil {
-			log.Warn().Str("key", key).Err(err).Msg("error running jq expression")
-			continue
-		}
+		jqRes, _ := expression.Run(data)
 		if jqRes == "" {
 			continue
 		}
 		output[key] = jqRes
 	}
-	return output, nil
+	return output
 }

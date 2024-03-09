@@ -37,21 +37,21 @@ func (p *JQTagsParser) handleObject(output common.UniqueMap[opslevel.TagInput], 
 func (p *JQTagsParser) parse(programs []*JQFieldParser, data string) []opslevel.TagInput {
 	output := make(common.UniqueMap[opslevel.TagInput])
 	for _, program := range programs {
-		response, err := program.Run(data)
-		if err != nil || response == "" {
+		response := program.Run(data)
+		if response == "" {
 			continue
 		}
 
 		if common.Object(response) {
 			var toMap map[string]string
-			err = json.Unmarshal([]byte(response), &toMap)
+			err := json.Unmarshal([]byte(response), &toMap)
 			if err != nil {
 				continue
 			}
 			p.handleObject(output, toMap)
 		} else if common.Array(response) {
 			var toSlice []map[string]string
-			err = json.Unmarshal([]byte(response), &toSlice)
+			err := json.Unmarshal([]byte(response), &toSlice)
 			if err != nil {
 				continue
 			}
@@ -63,6 +63,6 @@ func (p *JQTagsParser) parse(programs []*JQFieldParser, data string) []opslevel.
 	return output.Values()
 }
 
-func (p *JQTagsParser) Run(data string) ([]opslevel.TagInput, []opslevel.TagInput, error) {
-	return p.parse(p.creates, data), p.parse(p.assigns, data), nil
+func (p *JQTagsParser) Run(data string) ([]opslevel.TagInput, []opslevel.TagInput) {
+	return p.parse(p.creates, data), p.parse(p.assigns, data)
 }

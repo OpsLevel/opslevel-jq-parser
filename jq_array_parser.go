@@ -19,11 +19,11 @@ func NewJQArrayParser(expressions []string) *JQArrayParser {
 	}
 }
 
-func (p *JQArrayParser) Run(data string) ([]string, error) {
+func (p *JQArrayParser) Run(data string) []string {
 	output := make([]string, 0, len(p.programs))
 	for _, program := range p.programs {
-		response, err := program.Run(data)
-		if err != nil || response == "" {
+		response := program.Run(data)
+		if response == "" {
 			continue
 		}
 		if strings.HasPrefix(response, "[") && strings.HasSuffix(response, "]") {
@@ -40,5 +40,5 @@ func (p *JQArrayParser) Run(data string) ([]string, error) {
 			output = append(output, response)
 		}
 	}
-	return output, nil
+	return output
 }

@@ -57,8 +57,8 @@ func TestJQServiceParser(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			config, err := opslevel_jq_parser.NewServiceRegistrationConfig(tc.config)
 			autopilot.Ok(t, err)
-			parser := opslevel_jq_parser.NewJQServiceParser(*config)
-			service, err := parser.Run(k8sResource)
+			parser := opslevel_jq_parser.NewJQServiceParser(config)
+			service := parser.Run(k8sResource)
 			autopilot.Ok(t, err)
 
 			var expectedService opslevel_jq_parser.ServiceRegistration
@@ -73,19 +73,19 @@ func TestJQServiceParser(t *testing.T) {
 
 			// order of the slices does not matter - JSON marshal will output struct keys in order defined in the struct
 			// so before comparing, sort the slices
-			sortSlices(service)
+			sortSlices(&service)
 			sortSlices(&expectedService)
-			autopilot.Equals(t, expectedService, *service)
+			autopilot.Equals(t, expectedService, service)
 		})
 	}
 }
 
 func BenchmarkJQParser_New(b *testing.B) {
 	config, _ := opslevel_jq_parser.NewServiceRegistrationConfig(sampleConfig)
-	parser := opslevel_jq_parser.NewJQServiceParser(*config)
+	parser := opslevel_jq_parser.NewJQServiceParser(config)
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		_, _ = parser.Run(k8sResource)
+		_ = parser.Run(k8sResource)
 	}
 }
