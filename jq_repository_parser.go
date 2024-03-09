@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/opslevel/opslevel-go/v2024"
-	"github.com/rs/zerolog/log"
 )
 
 type RepositoryDTO struct {
@@ -40,13 +39,8 @@ func (p *JQRepositoryParser) Run(data string) ([]opslevel.ServiceRepositoryCreat
 	output := make([]opslevel.ServiceRepositoryCreateInput, 0, len(p.programs))
 	for _, program := range p.programs {
 		response, err := program.Run(data)
-		// log.Warn().Msgf("expression: %s\nresponse: %s", program.program.Program, response)
-		if err != nil {
-			log.Warn().Msgf("unable to parse alias from expression: %s", program.program.Program)
+		if err != nil || response == "" {
 			return nil, err
-		}
-		if response == "" {
-			continue
 		}
 		if strings.HasPrefix(response, "[") && strings.HasSuffix(response, "]") {
 			if response == "[]" {
@@ -69,8 +63,6 @@ func (p *JQRepositoryParser) Run(data string) ([]opslevel.ServiceRepositoryCreat
 		} else if strings.HasPrefix(response, "{") && strings.HasSuffix(response, "}") {
 			var repo RepositoryDTO
 			if err := json.Unmarshal([]byte(response), &repo); err != nil {
-				// TODO: log error
-				log.Warn().Err(err).Msgf("unable to marshal repo expression: %s\n%s", program.program.Program, response)
 				continue
 			}
 			output = append(output, repo.Convert())

@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	libjq_go "github.com/flant/libjq-go"
-	"github.com/rs/zerolog/log"
 )
 
 type JQDictParser map[string]JQFieldParser
@@ -31,11 +30,7 @@ func (p JQDictParser) Run(data string) (map[string]string, error) {
 	output := make(map[string]string)
 	for key, expression := range p {
 		jqRes, err := expression.Run(data)
-		if err != nil {
-			log.Warn().Str("key", key).Err(err).Msg("error running jq expression")
-			continue
-		}
-		if jqRes == "null" {
+		if err != nil || jqRes == "null" {
 			// in the case that the expression returned nothing (happens in the case where the key was not found)
 			// jq will return "null". This is not the same as empty string. So in that case, skip the item.
 			continue

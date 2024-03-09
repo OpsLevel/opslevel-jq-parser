@@ -3,8 +3,6 @@ package opslevel_jq_parser
 import (
 	"encoding/json"
 	"strings"
-
-	"github.com/rs/zerolog/log"
 )
 
 type JQArrayParser struct {
@@ -25,11 +23,7 @@ func (p *JQArrayParser) Run(data string) ([]string, error) {
 	output := make([]string, 0, len(p.programs))
 	for _, program := range p.programs {
 		response, err := program.Run(data)
-		if err != nil {
-			log.Warn().Err(err).Msgf("jq execution error from expression: %s", program.program.Program)
-			continue
-		}
-		if response == "" {
+		if err != nil || response == "" {
 			continue
 		}
 		if strings.HasPrefix(response, "[") && strings.HasSuffix(response, "]") {

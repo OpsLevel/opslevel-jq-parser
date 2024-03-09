@@ -6,7 +6,6 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/opslevel/opslevel-go/v2024"
 	"github.com/opslevel/opslevel-jq-parser/v2024/common"
-	"github.com/rs/zerolog/log"
 )
 
 type JQToolsParser struct {
@@ -38,7 +37,6 @@ func (p *JQToolsParser) Run(data string) ([]opslevel.ToolCreateInput, error) {
 	for _, program := range p.programs {
 		response, err := program.Run(data)
 		if err != nil || response == "" {
-			log.Warn().Msgf("unable to parse alias from expression: %s", program.program.Program)
 			continue
 		}
 
