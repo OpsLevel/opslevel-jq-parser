@@ -2,7 +2,6 @@ package opslevel_jq_parser
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/opslevel/opslevel-jq-parser/v2024/common"
 )
 
@@ -33,10 +32,9 @@ func defaultStringHandler(output *common.Set[string], rawJSON string) {
 	output.Add(rawJSON)
 }
 
-// TODO: allow plugging in custom object and string handlers
+// parse will handle type T in different formats (object, array, string) using objectHandler and stringHandler
 func parse[T any](output *common.Set[T], rawJSON string, objectHandler objectHandler[T], stringHandler stringHandler[T]) {
 	if common.Object(rawJSON) {
-		fmt.Println(rawJSON)
 		objectHandler(output, rawJSON)
 		return
 	}
@@ -63,7 +61,7 @@ func parse[T any](output *common.Set[T], rawJSON string, objectHandler objectHan
 	stringHandler(output, rawJSON)
 }
 
-func Run[T any](p JQArrayParser, data string, objectHandler objectHandler[T], stringHandler stringHandler[T]) []T {
+func run[T any](p JQArrayParser, data string, objectHandler objectHandler[T], stringHandler stringHandler[T]) []T {
 	output := common.NewSet[T]()
 	for _, program := range p {
 		jqRes := program.ParseValue(data)
