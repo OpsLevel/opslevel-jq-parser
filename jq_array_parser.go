@@ -35,7 +35,9 @@ func defaultStringHandler(output *common.Set[string], rawJSON string) {
 // parse will handle type T in different formats (object, array, string) using objectHandler and stringHandler
 func parse[T any](output *common.Set[T], rawJSON string, objectHandler objectHandler[T], stringHandler stringHandler[T]) {
 	if common.Object(rawJSON) {
-		objectHandler(output, rawJSON)
+		if objectHandler != nil {
+			objectHandler(output, rawJSON)
+		}
 		return
 	}
 	if common.Array(rawJSON) {
@@ -45,20 +47,17 @@ func parse[T any](output *common.Set[T], rawJSON string, objectHandler objectHan
 			return
 		}
 		for _, item := range array {
-			if common.Map(item) {
-				marshaled, err := json.Marshal(item)
-				if err != nil {
-					continue
-				}
-				parse(output, string(marshaled), objectHandler, stringHandler)
+			marshaled, err := json.Marshal(item)
+			if err != nil {
 				continue
 			}
-			stringHandler(output, rawJSON)
-			continue
+			parse(output, string(marshaled), objectHandler, stringHandler)
 		}
 		return
 	}
-	stringHandler(output, rawJSON)
+	if stringHandler != nil {
+		stringHandler(output, rawJSON)
+	}
 }
 
 func run[T any](p JQArrayParser, data string, objectHandler objectHandler[T], stringHandler stringHandler[T]) []T {

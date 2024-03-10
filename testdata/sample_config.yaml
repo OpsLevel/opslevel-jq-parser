@@ -12,7 +12,6 @@ system: .metadata.annotations."opslevel.com/system"
 tier: .metadata.annotations."opslevel.com/tier"
 repositories:
   - '{"name": "My Cool Repo", "directory": "", "repo": .metadata.annotations.repo} | if .repo then . else empty end'
-  - .metadata.annotations.repo
   - '.metadata.annotations | to_entries |  map(select(.key | startswith("opslevel.com/repo"))) | map({"name": .key | split(".")[2], "directory": .key | split(".")[3:] | join("/"), "repo": .value})'
 tags:
   assign:
