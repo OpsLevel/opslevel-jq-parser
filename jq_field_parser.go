@@ -24,7 +24,7 @@ func NewJQFieldParser(expression string) JQFieldParser {
 	}
 }
 
-func (p *JQFieldParser) Run(data string) string {
+func (p JQFieldParser) Run(data string) string {
 	output, _ := p.program.RunRaw(data)
 	return output
 }

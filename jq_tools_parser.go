@@ -22,7 +22,7 @@ func NewJQToolsParser(expressions []string) JQToolsParser {
 	}
 }
 
-func (p *JQToolsParser) handleObject(output common.UniqueMap[opslevel.ToolCreateInput], toMap map[string]string) {
+func (p JQToolsParser) handleObject(output common.UniqueMap[opslevel.ToolCreateInput], toMap map[string]string) {
 	var tool opslevel.ToolCreateInput
 	err := mapstructure.Decode(toMap, &tool)
 	if err != nil {
@@ -32,7 +32,7 @@ func (p *JQToolsParser) handleObject(output common.UniqueMap[opslevel.ToolCreate
 	output.Add(fmt.Sprintf("%s%s%v", tool.Category, tool.DisplayName, tool.Environment), tool)
 }
 
-func (p *JQToolsParser) Run(data string) []opslevel.ToolCreateInput {
+func (p JQToolsParser) Run(data string) []opslevel.ToolCreateInput {
 	output := make(common.UniqueMap[opslevel.ToolCreateInput])
 	for _, program := range p.programs {
 		response := program.Run(data)
