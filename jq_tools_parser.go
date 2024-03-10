@@ -8,18 +8,14 @@ import (
 	"github.com/opslevel/opslevel-jq-parser/v2024/common"
 )
 
-type JQToolsParser struct {
-	programs []JQFieldParser
-}
+type JQToolsParser []JQFieldParser
 
 func NewJQToolsParser(expressions []string) JQToolsParser {
 	programs := make([]JQFieldParser, len(expressions))
 	for i, expression := range expressions {
 		programs[i] = NewJQFieldParser(expression)
 	}
-	return JQToolsParser{
-		programs: programs,
-	}
+	return programs
 }
 
 func (p JQToolsParser) handleObject(output common.UniqueMap[opslevel.ToolCreateInput], toMap map[string]string) {
@@ -34,7 +30,7 @@ func (p JQToolsParser) handleObject(output common.UniqueMap[opslevel.ToolCreateI
 
 func (p JQToolsParser) Run(data string) []opslevel.ToolCreateInput {
 	output := make(common.UniqueMap[opslevel.ToolCreateInput])
-	for _, program := range p.programs {
+	for _, program := range p {
 		response := program.Run(data)
 		if response == "" {
 			continue

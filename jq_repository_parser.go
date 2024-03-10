@@ -21,18 +21,10 @@ func (r RepositoryDTO) Convert() opslevel.ServiceRepositoryCreateInput {
 	}
 }
 
-type JQRepositoryParser struct {
-	programs []JQFieldParser
-}
+type JQRepositoryParser []JQFieldParser
 
 func NewJQRepositoryParser(expressions []string) JQRepositoryParser {
-	programs := make([]JQFieldParser, len(expressions))
-	for i, expression := range expressions {
-		programs[i] = NewJQFieldParser(expression)
-	}
-	return JQRepositoryParser{
-		programs: programs,
-	}
+	return JQRepositoryParser(NewJQArrayParser(expressions))
 }
 
 func (p JQRepositoryParser) Run(data string) []opslevel.ServiceRepositoryCreateInput {

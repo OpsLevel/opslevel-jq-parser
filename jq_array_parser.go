@@ -5,23 +5,19 @@ import (
 	"github.com/opslevel/opslevel-jq-parser/v2024/common"
 )
 
-type JQArrayParser struct {
-	programs []JQFieldParser
-}
+type JQArrayParser []JQFieldParser
 
 func NewJQArrayParser(expressions []string) JQArrayParser {
 	programs := make([]JQFieldParser, len(expressions))
 	for i, expression := range expressions {
 		programs[i] = NewJQFieldParser(expression)
 	}
-	return JQArrayParser{
-		programs: programs,
-	}
+	return programs
 }
 
 func (p JQArrayParser) Run(data string) []string {
 	output := make(common.UniqueMap[bool])
-	for _, program := range p.programs {
+	for _, program := range p {
 		response := program.Run(data)
 		if response == "" {
 			continue
