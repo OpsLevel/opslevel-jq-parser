@@ -7,26 +7,26 @@ import (
 )
 
 type JQTagsParser struct {
-	creates []*JQFieldParser
-	assigns []*JQFieldParser
+	creates []JQFieldParser
+	assigns []JQFieldParser
 }
 
-func NewJQTagsParser(cfg TagRegistrationConfig) *JQTagsParser {
-	creates := make([]*JQFieldParser, len(cfg.Create))
+func NewJQTagsParser(cfg TagRegistrationConfig) JQTagsParser {
+	creates := make([]JQFieldParser, len(cfg.Create))
 	for i, expression := range cfg.Create {
 		creates[i] = NewJQFieldParser(expression)
 	}
-	assigns := make([]*JQFieldParser, len(cfg.Assign))
+	assigns := make([]JQFieldParser, len(cfg.Assign))
 	for i, expression := range cfg.Assign {
 		assigns[i] = NewJQFieldParser(expression)
 	}
-	return &JQTagsParser{
+	return JQTagsParser{
 		creates: creates,
 		assigns: assigns,
 	}
 }
 
-func (p *JQTagsParser) handleObject(output common.UniqueMap[opslevel.TagInput], toMap map[string]string) {
+func (p JQTagsParser) handleObject(output common.UniqueMap[opslevel.TagInput], toMap map[string]string) {
 	for k, v := range toMap {
 		tag := opslevel.TagInput{Key: k, Value: v}
 		output.Add(tag.Key+tag.Value, tag)
@@ -34,7 +34,7 @@ func (p *JQTagsParser) handleObject(output common.UniqueMap[opslevel.TagInput], 
 }
 
 // parse looks for JSON objects inside expression results and converts every key value pair into an opslevel.TagInput
-func (p *JQTagsParser) parse(programs []*JQFieldParser, data string) []opslevel.TagInput {
+func (p JQTagsParser) parse(programs []JQFieldParser, data string) []opslevel.TagInput {
 	output := make(common.UniqueMap[opslevel.TagInput])
 	for _, program := range programs {
 		response := program.Run(data)
@@ -63,6 +63,6 @@ func (p *JQTagsParser) parse(programs []*JQFieldParser, data string) []opslevel.
 	return output.Values()
 }
 
-func (p *JQTagsParser) Run(data string) ([]opslevel.TagInput, []opslevel.TagInput) {
+func (p JQTagsParser) Run(data string) ([]opslevel.TagInput, []opslevel.TagInput) {
 	return p.parse(p.creates, data), p.parse(p.assigns, data)
 }

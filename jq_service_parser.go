@@ -1,20 +1,20 @@
 package opslevel_jq_parser
 
 type JQServiceParser struct {
-	aliases      *JQArrayParser
-	description  *JQFieldParser
-	framework    *JQFieldParser
-	language     *JQFieldParser
-	lifecycle    *JQFieldParser
-	name         *JQFieldParser
-	owner        *JQFieldParser
-	product      *JQFieldParser
+	aliases      JQArrayParser
+	description  JQFieldParser
+	framework    JQFieldParser
+	language     JQFieldParser
+	lifecycle    JQFieldParser
+	name         JQFieldParser
+	owner        JQFieldParser
+	product      JQFieldParser
 	properties   JQDictParser
-	repositories *JQRepositoryParser
-	system       *JQFieldParser
-	tags         *JQTagsParser
-	tier         *JQFieldParser
-	tools        *JQToolsParser
+	repositories JQRepositoryParser
+	system       JQFieldParser
+	tags         JQTagsParser
+	tier         JQFieldParser
+	tools        JQToolsParser
 }
 
 func NewJQServiceParser(cfg ServiceRegistrationConfig) *JQServiceParser {

@@ -9,15 +9,15 @@ import (
 )
 
 type JQToolsParser struct {
-	programs []*JQFieldParser
+	programs []JQFieldParser
 }
 
-func NewJQToolsParser(expressions []string) *JQToolsParser {
-	programs := make([]*JQFieldParser, len(expressions))
+func NewJQToolsParser(expressions []string) JQToolsParser {
+	programs := make([]JQFieldParser, len(expressions))
 	for i, expression := range expressions {
 		programs[i] = NewJQFieldParser(expression)
 	}
-	return &JQToolsParser{
+	return JQToolsParser{
 		programs: programs,
 	}
 }

@@ -15,17 +15,17 @@ func appendEmptyExpr(expression string) string {
 }
 
 type JQFieldParser struct {
-	program *jq.JqProgram
+	program jq.JqProgram
 }
 
-func NewJQFieldParser(expression string) *JQFieldParser {
+func NewJQFieldParser(expression string) JQFieldParser {
 	expression = appendEmptyExpr(expression)
 	prg, err := libjq_go.Jq().Program(expression).Precompile()
 	if err != nil {
 		panic(fmt.Sprintf("unable to compile jq expression:  %s", expression))
 	}
-	return &JQFieldParser{
-		program: prg,
+	return JQFieldParser{
+		program: *prg,
 	}
 }
 
