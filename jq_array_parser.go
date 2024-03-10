@@ -2,6 +2,7 @@ package opslevel_jq_parser
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/opslevel/opslevel-jq-parser/v2024/common"
 )
 
@@ -15,29 +16,61 @@ func NewJQArrayParser(expressions []string) JQArrayParser {
 	return programs
 }
 
-func (p JQArrayParser) Run(data string) []string {
-	output := make(common.UniqueMap[bool])
-	for _, program := range p {
-		response := program.Run(data)
-		if response == "" {
-			continue
-		}
+type objectHandler[T any] func(*common.Set[T], string)
 
-		if common.Array(response) {
-			var elements []string
-			err := json.Unmarshal([]byte(response), &elements)
-			if err != nil {
-				continue
-			}
-			for _, elem := range elements {
-				if elem == "" {
+type stringHandler[T any] func(*common.Set[T], string)
+
+func defaultObjectHandler[T any](output *common.Set[T], rawJSON string) {
+	var object T
+	err := json.Unmarshal([]byte(rawJSON), &object)
+	if err != nil {
+		return
+	}
+	output.Add(object)
+}
+
+func defaultStringHandler(output *common.Set[string], rawJSON string) {
+	output.Add(rawJSON)
+}
+
+// TODO: allow plugging in custom object and string handlers
+func parse[T any](output *common.Set[T], rawJSON string, objectHandler objectHandler[T], stringHandler stringHandler[T]) {
+	if common.Object(rawJSON) {
+		fmt.Println(rawJSON)
+		objectHandler(output, rawJSON)
+		return
+	}
+	if common.Array(rawJSON) {
+		var array []any
+		err := json.Unmarshal([]byte(rawJSON), &array)
+		if err != nil {
+			return
+		}
+		for _, item := range array {
+			if common.Map(item) {
+				marshaled, err := json.Marshal(item)
+				if err != nil {
 					continue
 				}
-				output.Add(response, true)
+				parse(output, string(marshaled), objectHandler, stringHandler)
+				continue
 			}
+			stringHandler(output, rawJSON)
 			continue
 		}
-		output.Add(response, true)
+		return
 	}
-	return output.Keys()
+	stringHandler(output, rawJSON)
+}
+
+func Run[T any](p JQArrayParser, data string, objectHandler objectHandler[T], stringHandler stringHandler[T]) []T {
+	output := common.NewSet[T]()
+	for _, program := range p {
+		jqRes := program.ParseValue(data)
+		if jqRes == "" {
+			continue
+		}
+		parse[T](output, jqRes, objectHandler, stringHandler)
+	}
+	return output.Values()
 }

@@ -38,7 +38,7 @@ type ServiceRegistration struct {
 	Name         string                                  `json:"name,omitempty"`
 	Owner        string                                  `json:"owner,omitempty"`
 	Product      string                                  `json:"product,omitempty"`
-	Properties   map[string]string                       `json:"properties,omitempty"`
+	Properties   map[string]opslevel.PropertyInput       `json:"properties,omitempty"`
 	Repositories []opslevel.ServiceRepositoryCreateInput `json:"repositories,omitempty"` // This is a concrete class so fields are validated during `service preview`
 	System       string                                  `json:"system,omitempty"`
 	TagAssigns   []opslevel.TagInput                     `json:"tagAssigns,omitempty"`

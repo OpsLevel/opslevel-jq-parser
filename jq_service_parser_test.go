@@ -57,8 +57,7 @@ func TestJQServiceParser(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			config, err := opslevel_jq_parser.NewServiceRegistrationConfig(tc.config)
 			autopilot.Ok(t, err)
-			parser := opslevel_jq_parser.NewJQServiceParser(config)
-			service := parser.Run(k8sResource)
+			service := opslevel_jq_parser.RunWithConfig(config, k8sResource)
 			autopilot.Ok(t, err)
 
 			var expectedService opslevel_jq_parser.ServiceRegistration
@@ -82,10 +81,9 @@ func TestJQServiceParser(t *testing.T) {
 
 func BenchmarkJQParser_New(b *testing.B) {
 	config, _ := opslevel_jq_parser.NewServiceRegistrationConfig(sampleConfig)
-	parser := opslevel_jq_parser.NewJQServiceParser(config)
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		_ = parser.Run(k8sResource)
+		_ = opslevel_jq_parser.RunWithConfig(config, k8sResource)
 	}
 }
