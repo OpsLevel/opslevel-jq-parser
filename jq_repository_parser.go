@@ -13,7 +13,7 @@ type RepositoryDTO struct {
 	Repo      string
 }
 
-func (r *RepositoryDTO) Convert() opslevel.ServiceRepositoryCreateInput {
+func (r RepositoryDTO) Convert() opslevel.ServiceRepositoryCreateInput {
 	return opslevel.ServiceRepositoryCreateInput{
 		Repository:    *opslevel.NewIdentifier(r.Repo),
 		BaseDirectory: opslevel.RefOf(r.Directory),
@@ -35,7 +35,7 @@ func NewJQRepositoryParser(expressions []string) JQRepositoryParser {
 	}
 }
 
-func (p *JQRepositoryParser) Run(data string) []opslevel.ServiceRepositoryCreateInput {
+func (p JQRepositoryParser) Run(data string) []opslevel.ServiceRepositoryCreateInput {
 	output := make([]opslevel.ServiceRepositoryCreateInput, 0, len(p.programs))
 	for _, program := range p.programs {
 		response := program.Run(data)
