@@ -8,19 +8,19 @@ import (
 )
 
 type JQFieldParser struct {
-	program *jq.JqProgram
+	program jq.JqProgram
 }
 
-func NewJQFieldParser(expression string) *JQFieldParser {
+func NewJQFieldParser(expression string) JQFieldParser {
 	if expression == "" {
 		expression = "empty"
 	}
 	prg, err := libjq_go.Jq().Program(expression).Precompile()
 	if err != nil {
-		panic(fmt.Sprintf("unable to compile jq expression:  %s", expression))
+		panic(fmt.Sprintf("unable to compile jq expression '%s': %v", expression, err))
 	}
-	return &JQFieldParser{
-		program: prg,
+	return JQFieldParser{
+		program: *prg,
 	}
 }
 

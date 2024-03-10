@@ -1,27 +1,11 @@
 package opslevel_jq_parser
 
-import (
-	"fmt"
-
-	libjq_go "github.com/flant/libjq-go"
-)
-
 type JQDictParser map[string]JQFieldParser
 
 func NewJQDictParser(dict map[string]string) map[string]JQFieldParser {
 	output := make(map[string]JQFieldParser)
-	if dict == nil {
-		return output
-	}
-	jq := libjq_go.Jq()
 	for key, expression := range dict {
-		prg, err := jq.Program(expression).Precompile()
-		if err != nil {
-			panic(fmt.Sprintf("unable to compile jq dict: %s", dict))
-		}
-		output[key] = JQFieldParser{
-			program: prg,
-		}
+		output[key] = NewJQFieldParser(expression)
 	}
 	return output
 }
