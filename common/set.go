@@ -2,7 +2,7 @@ package common
 
 import "encoding/json"
 
-// Set enables deduplication of objects parsed by JQArrayParser on Add()
+// Set enables deduplication of objects
 type Set[T any] struct {
 	data map[string]T
 }
@@ -13,7 +13,7 @@ func NewSet[T any]() *Set[T] {
 	}
 }
 
-// Add performs deduplication of objects in the Set by treating the json marshaled value as a UID
+// Add performs deduplication of objects in the Set by treating the json marshaled value as a unique key
 func (set Set[T]) Add(object T) {
 	marshaled, err := json.Marshal(&object)
 	if err != nil {

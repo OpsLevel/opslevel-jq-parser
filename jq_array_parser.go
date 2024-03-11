@@ -19,6 +19,7 @@ type objectHandler[T any] func(*common.Set[T], string)
 
 type stringHandler[T any] func(*common.Set[T], string)
 
+// defaultObjectHandler will simply unmarshal the object and add it to the set
 func defaultObjectHandler[T any](output *common.Set[T], rawJSON string) {
 	var object T
 	err := json.Unmarshal([]byte(rawJSON), &object)
@@ -28,11 +29,13 @@ func defaultObjectHandler[T any](output *common.Set[T], rawJSON string) {
 	output.Add(object)
 }
 
+// defaultStringHandler will simply add the string to the set
 func defaultStringHandler(output *common.Set[string], rawJSON string) {
 	output.Add(rawJSON)
 }
 
-// parse will handle type T in different formats (object, array, string) using objectHandler and stringHandler
+// parse will handle T in different formats (object, array, string) using objectHandler and stringHandler
+// uses common.Set to avoid duplicate values
 func parse[T any](output *common.Set[T], rawJSON string, objectHandler objectHandler[T], stringHandler stringHandler[T]) {
 	if common.Object(rawJSON) {
 		if objectHandler != nil {
@@ -46,6 +49,7 @@ func parse[T any](output *common.Set[T], rawJSON string, objectHandler objectHan
 		if err != nil {
 			return
 		}
+		// in case this value is an array, parse each item on the array
 		for _, item := range array {
 			marshaled, err := json.Marshal(item)
 			if err != nil {
@@ -60,6 +64,7 @@ func parse[T any](output *common.Set[T], rawJSON string, objectHandler objectHan
 	}
 }
 
+// run executes jq expressions and calls parse on the result.
 func run[T any](p JQArrayParser, data string, objectHandler objectHandler[T], stringHandler stringHandler[T]) []T {
 	output := common.NewSet[T]()
 	for _, program := range p {

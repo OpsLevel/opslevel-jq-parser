@@ -15,10 +15,3 @@ func Array(s string) bool {
 	}
 	return false
 }
-
-func Map(a any) bool {
-	if _, ok := a.(map[string]any); ok {
-		return true
-	}
-	return false
-}
