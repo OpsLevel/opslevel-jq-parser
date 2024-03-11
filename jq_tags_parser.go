@@ -1,9 +1,7 @@
 package opslevel_jq_parser
 
 import (
-	"cmp"
 	"encoding/json"
-	"slices"
 	"strings"
 
 	"github.com/opslevel/opslevel-go/v2024"
@@ -72,10 +70,6 @@ func (p *JQTagsParser) parse(programs []*JQFieldParser, data string) []opslevel.
 			}
 		}
 	}
-	// TODO: fix this hack to make the hashmap keys order be consistent (needed for testing.)
-	slices.SortFunc(output, func(a, b opslevel.TagInput) int {
-		return cmp.Compare(a.Key+a.Value, b.Key+b.Value)
-	})
 	return output
 }
 
