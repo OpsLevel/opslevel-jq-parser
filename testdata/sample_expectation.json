@@ -1,0 +1,90 @@
+{
+    "aliases": [
+        "k8s:web-self-hosted",
+        "self-hosted-web"
+    ],
+    "description": "this is a description",
+    "framework": "rails",
+    "language": "ruby",
+    "lifecycle": "alpha",
+    "name": "web",
+    "owner": "velero",
+    "product": "jklabs",
+    "properties": {},
+    "repositories": [
+        {
+            "service": null,
+            "repository": {
+                "alias": "github.com:hashicorp/vault"
+            },
+            "baseDirectory": "",
+            "displayName": "My Cool Repo"
+        },
+        {
+            "service": null,
+            "repository": {
+                "alias": "github.com:hashicorp/vault"
+            }
+        },
+        {
+            "service": null,
+            "repository": {
+                "alias": "gitlab.com:opslevel/terraform"
+            },
+            "baseDirectory": "clusters/dev/opslevel",
+            "displayName": "terraform"
+        }
+    ],
+    "system": "monolith",
+    "tagAssigns": [
+        {
+            "key": "app.kubernetes.io/instance",
+            "value": "web"
+        },
+        {
+            "key": "app.kubernetes.io/part-of",
+            "value": "opslevel"
+        },
+        {
+            "key": "imported",
+            "value": "kubectl-opslevel"
+        },
+        {
+            "key": "kots.io/app-slug",
+            "value": "opslevel"
+        },
+        {
+            "key": "kots.io/backup",
+            "value": "velero"
+        }
+    ],
+    "tagCreates": [
+        {
+            "key": "environment",
+            "value": "dev"
+        }
+    ],
+    "tier": "tier_1",
+    "tools": [
+        {
+            "category": "logs",
+            "displayName": "my-ci",
+            "url": "https://circleci.com"
+        },
+        {
+            "category": "logs",
+            "displayName": "my-graphs",
+            "url": "https://datadog.com"
+        },
+        {
+            "category": "logs",
+            "displayName": "my-logs",
+            "url": "https://splunk.com"
+        },
+        {
+            "category": "logs",
+            "displayName": "my-schedule",
+            "url": "https://pagerduty.com"
+        }
+    ]
+}

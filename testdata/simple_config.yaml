@@ -1,0 +1,18 @@
+name: .metadata.name
+owner: .metadata.namespace
+aliases:
+  - '"k8s:\(.metadata.name)-\(.metadata.namespace)"'
+properties:
+  notfound: .metadata.annotations.notfound
+  notfound2: .metadata.annotations.notfound2
+  prop_bool: .metadata.annotations.prop_bool
+  prop_empty_object: .metadata.annotations.prop_empty_object
+  prop_empty_string: .metadata.annotations.prop_empty_string
+  prop_object: .metadata.annotations.prop_object
+  prop_string: .metadata.annotations.prop_string
+tags:
+  assign:
+    - '{"imported": "kubectl-opslevel"}'
+    - .metadata.labels
+  create:
+    - '{"environment": .spec.template.metadata.labels.environment}'

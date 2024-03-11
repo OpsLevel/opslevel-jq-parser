@@ -1,0 +1,236 @@
+{
+    "apiVersion": "apps/v1",
+    "kind": "Deployment",
+    "metadata": {
+        "annotations": {
+            "deployment.kubernetes.io/revision": "243",
+            "kots.io/app-slug": "opslevel",
+            "opslevel.com/description": "this is a description",
+            "opslevel.com/framework": "rails",
+            "opslevel.com/language": "ruby",
+            "opslevel.com/lifecycle": "alpha",
+            "opslevel.com/owner": "velero",
+            "opslevel.com/product": "jklabs",
+            "opslevel.com/repo.terraform.clusters.dev.opslevel": "gitlab.com:opslevel/terraform",
+            "opslevel.com/system": "monolith",
+            "opslevel.com/tier": "tier_1",
+            "opslevel.com/tools.logs.my-ci": "https://circleci.com",
+            "opslevel.com/tools.logs.my-graphs": "https://datadog.com",
+            "opslevel.com/tools.logs.my-logs": "https://splunk.com",
+            "opslevel.com/tools.logs.my-logs": "https://splunk.com",
+            "opslevel.com/tools.logs.my-schedule": "https://pagerduty.com",
+            "opslevel.com/tools.logs.my-schedule": "https://pagerduty.com",
+            "prop_bool": true,
+            "prop_empty_object": {},
+            "prop_empty_string": "",
+            "prop_object": {
+                "message": "hello world",
+                "condition": true
+            },
+            "prop_string": "hello world",
+            "repo": "github.com:hashicorp/vault"
+        },
+        "creationTimestamp": "2023-07-19T18:04:03Z",
+        "generation": 243,
+        "labels": {
+            "app.kubernetes.io/instance": "web",
+            "app.kubernetes.io/part-of": "opslevel",
+            "kots.io/app-slug": "opslevel",
+            "kots.io/backup": "velero"
+        },
+        "name": "web",
+        "namespace": "self-hosted",
+        "resourceVersion": "383293724",
+        "uid": "19d729de-f708-437c-8b65-10fa06d5dfd5"
+    },
+    "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 2,
+        "revisionHistoryLimit": 3,
+        "selector": {
+            "matchLabels": {
+                "app.kubernetes.io/instance": "web",
+                "app.kubernetes.io/part-of": "opslevel"
+            }
+        },
+        "strategy": {
+            "rollingUpdate": {
+                "maxSurge": "1",
+                "maxUnavailable": 0
+            },
+            "type": "RollingUpdate"
+        },
+        "template": {
+            "metadata": {
+                "annotations": {
+                    "kots.io/app-slug": "opslevel"
+                },
+                "creationTimestamp": null,
+                "labels": {
+                    "app.kubernetes.io/instance": "web",
+                    "app.kubernetes.io/part-of": "opslevel",
+                    "environment": "dev",
+                    "collect-logs": "true"
+                }
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "args": [
+                            "bundle",
+                            "exec",
+                            "puma",
+                            "-C ./config/puma.rb"
+                        ],
+                        "env": [],
+                        "envFrom": [
+                            {
+                                "configMapRef": {
+                                    "name": "opslevel"
+                                }
+                            },
+                            {
+                                "secretRef": {
+                                    "name": "opslevel"
+                                }
+                            }
+                        ],
+                        "image": "opslevel/opslevel:main-240131e5",
+                        "imagePullPolicy": "Always",
+                        "lifecycle": {
+                            "preStop": {
+                                "exec": {
+                                    "command": [
+                                        "sleep",
+                                        "15"
+                                    ]
+                                }
+                            }
+                        },
+                        "livenessProbe": {
+                            "failureThreshold": 3,
+                            "initialDelaySeconds": 3,
+                            "periodSeconds": 20,
+                            "successThreshold": 1,
+                            "tcpSocket": {
+                                "port": "opslevel"
+                            },
+                            "timeoutSeconds": 1
+                        },
+                        "name": "web",
+                        "ports": [
+                            {
+                                "containerPort": 3000,
+                                "name": "opslevel",
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "readinessProbe": {
+                            "failureThreshold": 3,
+                            "httpGet": {
+                                "path": "/api/ping",
+                                "port": "opslevel",
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 5,
+                            "periodSeconds": 10,
+                            "successThreshold": 2,
+                            "timeoutSeconds": 1
+                        },
+                        "resources": {
+                            "limits": {
+                                "cpu": "1",
+                                "memory": "1536Mi"
+                            },
+                            "requests": {
+                                "cpu": "500m",
+                                "memory": "500Mi"
+                            }
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File"
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "imagePullSecrets": [
+                    {
+                        "name": "opslevel-registry"
+                    }
+                ],
+                "initContainers": [
+                    {
+                        "args": [
+                            "bundle",
+                            "exec",
+                            "rake",
+                            "db:abort_if_pending_migrations"
+                        ],
+                        "envFrom": [
+                            {
+                                "configMapRef": {
+                                    "name": "opslevel"
+                                }
+                            },
+                            {
+                                "secretRef": {
+                                    "name": "opslevel"
+                                }
+                            }
+                        ],
+                        "image": "opslevel/opslevel:main-240131e5",
+                        "imagePullPolicy": "Always",
+                        "name": "migrations",
+                        "resources": {},
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File"
+                    }
+                ],
+                "nodeSelector": {
+                    "kubernetes.io/os": "linux"
+                },
+                "restartPolicy": "Always",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "terminationGracePeriodSeconds": 30,
+                "topologySpreadConstraints": [
+                    {
+                        "labelSelector": {
+                            "matchLabels": {
+                                "app.kubernetes.io/name": "web",
+                                "app.kubernetes.io/part-of": "opslevel"
+                            }
+                        },
+                        "maxSkew": 1,
+                        "topologyKey": "topology.kubernetes.io/zone",
+                        "whenUnsatisfiable": "ScheduleAnyway"
+                    }
+                ]
+            }
+        }
+    },
+    "status": {
+        "availableReplicas": 2,
+        "conditions": [
+            {
+                "lastTransitionTime": "2023-07-19T18:05:54Z",
+                "lastUpdateTime": "2023-07-19T18:05:54Z",
+                "message": "Deployment has minimum availability.",
+                "reason": "MinimumReplicasAvailable",
+                "status": "True",
+                "type": "Available"
+            },
+            {
+                "lastTransitionTime": "2023-08-31T09:00:52Z",
+                "lastUpdateTime": "2023-09-25T16:26:30Z",
+                "message": "ReplicaSet \"web-6fd48cb855\" has successfully progressed.",
+                "reason": "NewReplicaSetAvailable",
+                "status": "True",
+                "type": "Progressing"
+            }
+        ],
+        "observedGeneration": 243,
+        "readyReplicas": 2,
+        "replicas": 2,
+        "updatedReplicas": 2
+    }
+}
