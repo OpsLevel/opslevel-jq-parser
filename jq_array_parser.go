@@ -68,7 +68,7 @@ func parse[T any](output *common.Set[T], rawJSON string, objectHandler objectHan
 func run[T any](p JQArrayParser, data string, objectHandler objectHandler[T], stringHandler stringHandler[T]) []T {
 	output := common.NewSet[T]()
 	for _, program := range p {
-		jqRes := program.ParseValue(data)
+		jqRes := program.Run(data)
 		if jqRes == "" {
 			continue
 		}

@@ -13,7 +13,7 @@ type RepositoryDTO struct {
 	Repo      string
 }
 
-func (r *RepositoryDTO) Convert() opslevel.ServiceRepositoryCreateInput {
+func (r RepositoryDTO) Convert() opslevel.ServiceRepositoryCreateInput {
 	return opslevel.ServiceRepositoryCreateInput{
 		Repository:    *opslevel.NewIdentifier(r.Repo),
 		BaseDirectory: opslevel.RefOf(r.Directory),
