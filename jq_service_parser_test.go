@@ -74,7 +74,7 @@ func TestJQServiceParser(t *testing.T) {
 			// so before comparing, sort the slices
 			sortSlices(&service)
 			sortSlices(&expectedService)
-			autopilot.Equals(t, expectedService.Repositories, service.Repositories)
+			autopilot.Equals(t, expectedService, service)
 		})
 	}
 }

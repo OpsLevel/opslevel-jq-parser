@@ -15,7 +15,7 @@ func appendEmptyExpr(expression string) string {
 }
 
 type JQFieldParser struct {
-	program *jq.JqProgram
+	program jq.JqProgram
 }
 
 func NewJQFieldParser(expression string) JQFieldParser {
@@ -25,7 +25,7 @@ func NewJQFieldParser(expression string) JQFieldParser {
 		panic(fmt.Sprintf("unable to compile jq expression:  %s", expression))
 	}
 	return JQFieldParser{
-		program: prg,
+		program: *prg,
 	}
 }
 
