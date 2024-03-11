@@ -22,11 +22,17 @@ var simpleConfig string
 //go:embed testdata/sample_config.yaml
 var sampleConfig string
 
+//go:embed testdata/duplicate_config.yaml
+var duplicateConfig string
+
 //go:embed testdata/simple_expectation.json
 var simpleExpectation string
 
 //go:embed testdata/sample_expectation.json
 var sampleExpectation string
+
+//go:embed testdata/duplicate_expectation.json
+var duplicateExpectation string
 
 func compAny[T any](a, b T) int {
 	x, _ := json.Marshal(a)
@@ -51,6 +57,7 @@ func TestJQServiceParser(t *testing.T) {
 	testCases := []TestCase{
 		{"using simple config", simpleConfig, simpleExpectation},
 		{"using sample config", sampleConfig, sampleExpectation},
+		{"using duplicate config", duplicateConfig, duplicateExpectation},
 	}
 
 	for _, tc := range testCases {

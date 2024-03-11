@@ -1,6 +1,8 @@
 package common
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 // Set enables deduplication of objects
 type Set[T any] struct {
