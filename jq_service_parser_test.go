@@ -8,7 +8,6 @@ import (
 	"slices"
 	"testing"
 
-	opslevel "github.com/opslevel/opslevel-go/v2024"
 	opslevel_jq_parser "github.com/opslevel/opslevel-jq-parser/v2024"
 	"github.com/rocktavious/autopilot/v2023"
 )
@@ -69,12 +68,6 @@ func TestJQServiceParser(t *testing.T) {
 
 			var expectedService opslevel_jq_parser.ServiceRegistration
 			err = json.Unmarshal([]byte(tc.expectedServiceReg), &expectedService)
-
-			// order of the slices does not matter - JSON marshal will output struct keys in order defined in the struct
-			// so before comparing, sort the slices
-			sortSlices(service)
-			sortSlices(&expectedService)
-
 			autopilot.Ok(t, err)
 
 			// order of the slices does not matter - JSON marshal will output struct keys in order defined in the struct

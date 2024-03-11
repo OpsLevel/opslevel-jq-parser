@@ -2,6 +2,7 @@ package opslevel_jq_parser
 
 import (
 	"encoding/json"
+
 	"github.com/opslevel/opslevel-jq-parser/v2024/common"
 )
 
