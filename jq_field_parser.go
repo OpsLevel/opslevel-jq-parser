@@ -12,6 +12,9 @@ type JQFieldParser struct {
 }
 
 func NewJQFieldParser(expression string) *JQFieldParser {
+	if expression == "" {
+		expression = "empty"
+	}
 	prg, err := libjq_go.Jq().Program(expression).Precompile()
 	if err != nil {
 		panic(fmt.Sprintf("unable to compile jq expression:  %s", expression))
