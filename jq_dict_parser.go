@@ -1,7 +1,6 @@
 package opslevel_jq_parser
 
 import (
-	"encoding/json"
 	"github.com/opslevel/opslevel-go/v2024"
 )
 
@@ -15,19 +14,14 @@ func NewJQDictParser(dict map[string]string) JQDictParser {
 	return output
 }
 
-func (p JQDictParser) Run(data string) map[string]opslevel.PropertyInput {
-	output := make(map[string]opslevel.PropertyInput)
+func (p JQDictParser) Run(data string) map[string]opslevel.JsonString {
+	output := make(map[string]opslevel.JsonString)
 	for key, expression := range p {
 		jqRes := expression.Run(data)
 		if jqRes == "" {
 			continue
 		}
-		var propertyInput opslevel.PropertyInput
-		err := json.Unmarshal([]byte(jqRes), &propertyInput)
-		if err != nil {
-			continue
-		}
-		output[key] = propertyInput
+		output[key] = opslevel.JsonString(jqRes)
 	}
 	return output
 }
