@@ -7,7 +7,6 @@
     "properties": {
         "prop_bool": "true",
         "prop_empty_object": "{}",
-        "prop_empty_string": "",
         "prop_object": "{\"message\":\"hello world\",\"condition\":true}",
         "prop_string": "hello world"
     },
