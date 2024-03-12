@@ -16,6 +16,7 @@ func NewJQDictParser(dict map[string]string) map[string]JQFieldParser {
 	}
 	jq := libjq_go.Jq()
 	for key, expression := range dict {
+		expression = appendEmptyExpr(expression)
 		prg, err := jq.Program(expression).Precompile()
 		if err != nil {
 			panic(fmt.Sprintf("unable to compile jq dict: %s", dict))
@@ -35,9 +36,7 @@ func (p JQDictParser) Run(data string) (map[string]string, error) {
 			log.Warn().Str("key", key).Err(err).Msg("error running jq expression")
 			continue
 		}
-		if jqRes == "null" {
-			// in the case that the expression returned nothing (happens in the case where the key was not found)
-			// jq will return "null". This is not the same as empty string. So in that case, skip the item.
+		if jqRes == "" {
 			continue
 		}
 		output[key] = jqRes
