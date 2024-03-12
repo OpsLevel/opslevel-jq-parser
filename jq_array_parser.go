@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
+	libjq_go "github.com/flant/libjq-go"
+
 	"github.com/rs/zerolog/log"
 )
 
@@ -46,5 +48,31 @@ func (p *JQArrayParser) Run(data string) ([]string, error) {
 			output = append(output, response)
 		}
 	}
-	return output, nil
+	return runJQUnique[string](output)
+}
+
+func runJQUnique[T any](inputArray []T) ([]T, error) {
+	prg, err := libjq_go.Jq().Program("unique").Precompile()
+	if err != nil {
+		return nil, err
+	}
+	rawJSON, err := json.Marshal(inputArray)
+	if err != nil {
+		return nil, err
+	}
+
+	resultArray, err := prg.RunRaw(string(rawJSON))
+	if err != nil {
+		return nil, err
+	}
+	if resultArray == "null" {
+		return nil, nil
+	}
+
+	var uniqueArray []T
+	err = json.Unmarshal([]byte(resultArray), &uniqueArray)
+	if err != nil {
+		return nil, err
+	}
+	return uniqueArray, nil
 }

@@ -77,7 +77,6 @@ func (p *JQRepositoryParser) Run(data string) ([]opslevel.ServiceRepositoryCreat
 		} else {
 			output = append(output, opslevel.ServiceRepositoryCreateInput{Repository: *opslevel.NewIdentifier(response)})
 		}
-
 	}
-	return output, nil
+	return runJQUnique[opslevel.ServiceRepositoryCreateInput](output)
 }
