@@ -44,7 +44,7 @@ tasks:
       - nilaway -fix -test=false -include-pkgs='github.com/opslevel/opslevel-jq-parser' ./...
 
   parse:
-    desc: Locally parse config YAML files
+    desc: Locally parse config YAML files. Optionally pass in config with 'task parse -- myconfig.yaml'
     dir: "{{.LOCAL_DIR}}"
     cmds:
       - >
