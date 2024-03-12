@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"os"
 
 	opslevel_jq_parser "github.com/opslevel/opslevel-jq-parser/v2024"
 )
@@ -10,13 +11,17 @@ import (
 //go:embed config.yaml
 var configYamlFile string
 
-//go:embed deployment.json
 var deploymentJson string
 
 func main() {
+	deploymentJson, err := os.ReadFile("../testdata/deployment.json")
+	if err != nil {
+		panic(err)
+	}
+
 	config := getServiceRegistrationConfig()
 	parser := opslevel_jq_parser.NewJQServiceParser(*config)
-	service, err := parser.Run(deploymentJson)
+	service, err := parser.Run(string(deploymentJson))
 	if err != nil {
 		panic(err)
 	}
