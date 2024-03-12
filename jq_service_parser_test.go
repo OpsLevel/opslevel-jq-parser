@@ -1,12 +1,14 @@
 package opslevel_jq_parser_test
 
 import (
+	"cmp"
 	_ "embed"
 	"encoding/json"
 	"fmt"
 	"slices"
 	"testing"
 
+	opslevel "github.com/opslevel/opslevel-go/v2024"
 	opslevel_jq_parser "github.com/opslevel/opslevel-jq-parser/v2024"
 	"github.com/rocktavious/autopilot/v2023"
 )
@@ -25,6 +27,20 @@ var simpleExpectation string
 
 //go:embed testdata/sample_expectation.json
 var sampleExpectation string
+
+func compAny[T any](a, b T) int {
+	x, _ := json.Marshal(a)
+	y, _ := json.Marshal(b)
+	return cmp.Compare(string(x), string(y))
+}
+
+func sortSlices(service *opslevel_jq_parser.ServiceRegistration) {
+	slices.Sort(service.Aliases)
+	slices.SortFunc(service.Repositories, compAny[opslevel.ServiceRepositoryCreateInput])
+	slices.SortFunc(service.TagAssigns, compAny[opslevel.TagInput])
+	slices.SortFunc(service.TagCreates, compAny[opslevel.TagInput])
+	slices.SortFunc(service.Tools, compAny[opslevel.ToolCreateInput])
+}
 
 func TestJQServiceParser(t *testing.T) {
 	type TestCase struct {
@@ -47,6 +63,12 @@ func TestJQServiceParser(t *testing.T) {
 
 			var expectedService opslevel_jq_parser.ServiceRegistration
 			err = json.Unmarshal([]byte(tc.expectedServiceReg), &expectedService)
+
+			// order of the slices does not matter - JSON marshal will output struct keys in order defined in the struct
+			// so before comparing, sort the slices
+			sortSlices(service)
+			sortSlices(&expectedService)
+
 			autopilot.Ok(t, err)
 			autopilot.Equals(t, expectedService, *service)
 		})
