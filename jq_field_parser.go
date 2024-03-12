@@ -7,19 +7,14 @@ import (
 	"github.com/flant/libjq-go/pkg/jq"
 )
 
-func appendEmptyExpr(expression string) string {
-	if expression == "" {
-		return "empty"
-	}
-	return expression + " // empty"
-}
-
 type JQFieldParser struct {
 	program *jq.JqProgram
 }
 
 func NewJQFieldParser(expression string) *JQFieldParser {
-	expression = appendEmptyExpr(expression)
+	if expression == "" {
+		expression = "empty"
+	}
 	prg, err := libjq_go.Jq().Program(expression).Precompile()
 	if err != nil {
 		panic(fmt.Sprintf("unable to compile jq expression:  %s", expression))
@@ -30,5 +25,12 @@ func NewJQFieldParser(expression string) *JQFieldParser {
 }
 
 func (p *JQFieldParser) Run(data string) (string, error) {
-	return p.program.RunRaw(data)
+	parsedData, err := p.program.RunRaw(data)
+	if err != nil {
+		return "", err
+	}
+	if parsedData == "null" {
+		return "", nil
+	}
+	return parsedData, nil
 }

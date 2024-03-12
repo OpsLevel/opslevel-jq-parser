@@ -53,7 +53,7 @@ tasks:
           echo "Copying {{.ROOT_DIR}}/{{.CLI_ARGS}} to {{.LOCAL_DIR}}/{{.LOCAL_CONFIG_YAML}} for local testing..."
           cp {{.ROOT_DIR}}/{{.CLI_ARGS}} {{.LOCAL_CONFIG_YAML}}
         fi
-      - go run parse.go {{.LOCAL_CONFIG_YAML}}
+      - go run parse.go
 
   setup:
     desc: Setup linter, formatter, etc. for local testing and CI
