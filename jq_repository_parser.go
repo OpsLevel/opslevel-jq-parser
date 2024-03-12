@@ -3,6 +3,7 @@ package opslevel_jq_parser
 import (
 	"encoding/json"
 	"fmt"
+	"golang.org/x/exp/maps"
 	"strings"
 
 	"github.com/opslevel/opslevel-go/v2024"
@@ -42,7 +43,7 @@ func NewJQRepositoryParser(expressions []string) *JQRepositoryParser {
 }
 
 func (p *JQRepositoryParser) Run(data string) ([]opslevel.ServiceRepositoryCreateInput, error) {
-	output := make([]opslevel.ServiceRepositoryCreateInput, 0, len(p.programs))
+	output := make(map[string]opslevel.ServiceRepositoryCreateInput)
 	for _, program := range p.programs {
 		response, err := program.Run(data)
 		// log.Warn().Msgf("expression: %s\nresponse: %s", program.program.Program, response)
@@ -64,14 +65,14 @@ func (p *JQRepositoryParser) Run(data string) ([]opslevel.ServiceRepositoryCreat
 					if err != nil {
 						continue
 					}
-					output = append(output, repoInput)
+					output[repo.Repo] = repoInput
 				}
 			} else {
 				// Try as []string
 				var repoNames []string
 				if err := json.Unmarshal([]byte(response), &repoNames); err == nil {
 					for _, repoName := range repoNames {
-						output = append(output, opslevel.ServiceRepositoryCreateInput{Repository: *opslevel.NewIdentifier(repoName)})
+						output[repoName] = opslevel.ServiceRepositoryCreateInput{Repository: *opslevel.NewIdentifier(repoName)}
 					}
 				}
 			}
@@ -86,10 +87,10 @@ func (p *JQRepositoryParser) Run(data string) ([]opslevel.ServiceRepositoryCreat
 			if err != nil {
 				continue
 			}
-			output = append(output, repoInput)
+			output[repo.Repo] = repoInput
 		} else {
-			output = append(output, opslevel.ServiceRepositoryCreateInput{Repository: *opslevel.NewIdentifier(response)})
+			output[response] = opslevel.ServiceRepositoryCreateInput{Repository: *opslevel.NewIdentifier(response)}
 		}
 	}
-	return runJQUnique[opslevel.ServiceRepositoryCreateInput](output)
+	return maps.Values(output), nil
 }
