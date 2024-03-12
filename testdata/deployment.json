@@ -17,8 +17,6 @@
             "opslevel.com/tools.logs.my-ci": "https://circleci.com",
             "opslevel.com/tools.logs.my-graphs": "https://datadog.com",
             "opslevel.com/tools.logs.my-logs": "https://splunk.com",
-            "opslevel.com/tools.logs.my-logs": "https://splunk.com",
-            "opslevel.com/tools.logs.my-schedule": "https://pagerduty.com",
             "opslevel.com/tools.logs.my-schedule": "https://pagerduty.com",
             "prop_bool": true,
             "prop_empty_object": {},
