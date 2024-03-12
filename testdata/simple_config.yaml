@@ -7,7 +7,6 @@ properties:
   notfound2: .metadata.annotations.notfound2
   prop_bool: .metadata.annotations.prop_bool
   prop_empty_object: .metadata.annotations.prop_empty_object
-  prop_empty_string: .metadata.annotations.prop_empty_string
   prop_object: .metadata.annotations.prop_object
   prop_string: .metadata.annotations.prop_string
 tags:
