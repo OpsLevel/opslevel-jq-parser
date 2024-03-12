@@ -23,12 +23,6 @@
         {
             "service": null,
             "repository": {
-                "alias": "github.com:hashicorp/vault"
-            }
-        },
-        {
-            "service": null,
-            "repository": {
                 "alias": "gitlab.com:opslevel/terraform"
             },
             "baseDirectory": "clusters/dev/opslevel",

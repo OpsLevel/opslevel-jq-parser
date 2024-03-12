@@ -2,6 +2,7 @@ package opslevel_jq_parser
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/opslevel/opslevel-go/v2024"
@@ -14,12 +15,16 @@ type RepositoryDTO struct {
 	Repo      string
 }
 
-func (r *RepositoryDTO) Convert() opslevel.ServiceRepositoryCreateInput {
+func (r *RepositoryDTO) Convert() (opslevel.ServiceRepositoryCreateInput, error) {
+	var repo opslevel.ServiceRepositoryCreateInput
+	if r.Repo == "" {
+		return repo, fmt.Errorf("cannot create ServiceRepositoryCreateInput without repository alias")
+	}
 	return opslevel.ServiceRepositoryCreateInput{
 		Repository:    *opslevel.NewIdentifier(r.Repo),
 		BaseDirectory: opslevel.RefOf(r.Directory),
 		DisplayName:   opslevel.RefOf(r.Name),
-	}
+	}, nil
 }
 
 type JQRepositoryParser struct {
@@ -55,7 +60,11 @@ func (p *JQRepositoryParser) Run(data string) ([]opslevel.ServiceRepositoryCreat
 			var repos []RepositoryDTO
 			if err := json.Unmarshal([]byte(response), &repos); err == nil {
 				for _, repo := range repos {
-					output = append(output, repo.Convert())
+					repoInput, err := repo.Convert()
+					if err != nil {
+						continue
+					}
+					output = append(output, repoInput)
 				}
 			} else {
 				// Try as []string
@@ -73,7 +82,11 @@ func (p *JQRepositoryParser) Run(data string) ([]opslevel.ServiceRepositoryCreat
 				log.Warn().Err(err).Msgf("unable to marshal repo expression: %s\n%s", program.program.Program, response)
 				continue
 			}
-			output = append(output, repo.Convert())
+			repoInput, err := repo.Convert()
+			if err != nil {
+				continue
+			}
+			output = append(output, repoInput)
 		} else {
 			output = append(output, opslevel.ServiceRepositoryCreateInput{Repository: *opslevel.NewIdentifier(response)})
 		}
