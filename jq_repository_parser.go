@@ -3,8 +3,9 @@ package opslevel_jq_parser
 import (
 	"encoding/json"
 	"fmt"
-	"golang.org/x/exp/maps"
 	"strings"
+
+	"golang.org/x/exp/maps"
 
 	"github.com/opslevel/opslevel-go/v2024"
 	"github.com/rs/zerolog/log"
