@@ -11,8 +11,6 @@ import (
 //go:embed config.yaml
 var configYamlFile string
 
-var deploymentJson string
-
 func main() {
 	deploymentJson, err := os.ReadFile("../testdata/deployment.json")
 	if err != nil {
