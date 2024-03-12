@@ -70,7 +70,8 @@ func (p *JQTagsParser) parse(programs []*JQFieldParser, data string) []opslevel.
 			}
 		}
 	}
-	return output
+	unique, _ := runJQUnique[opslevel.TagInput](output)
+	return unique
 }
 
 func (p *JQTagsParser) Run(data string) ([]opslevel.TagInput, []opslevel.TagInput, error) {
