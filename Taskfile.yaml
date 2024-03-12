@@ -5,6 +5,8 @@ version: '3'
 dotenv: ['.env']
 
 env:
+  LOCAL_CONFIG_YAML: "config.yaml"
+  LOCAL_DIR: "local"
   OPSLEVEL_GO_PKG: "github.com/opslevel/opslevel-go/v2024"
   SRC_DIR: "{{.TASKFILE_DIR}}"
 
@@ -40,6 +42,18 @@ tasks:
       - go mod tidy
       - golangci-lint run --fix
       - nilaway -fix -test=false -include-pkgs='github.com/opslevel/opslevel-jq-parser' ./...
+
+  parse:
+    desc: Locally parse config YAML files
+    dir: "{{.LOCAL_DIR}}"
+    cmds:
+      - >
+        if [[ {{.CLI_ARGS | default "config.yaml" }} != {{.LOCAL_CONFIG_YAML}} ]]; then
+          echo "Copying {{.ROOT_DIR}}/{{.CLI_ARGS}} to {{.LOCAL_DIR}}/{{.LOCAL_CONFIG_YAML}} for local testing..."
+          cp {{.ROOT_DIR}}/{{.CLI_ARGS}} {{.LOCAL_CONFIG_YAML}}
+        fi
+      - pwd
+      - go run parse.go {{.LOCAL_CONFIG_YAML}}
 
   setup:
     desc: Setup linter, formatter, etc. for local testing and CI
