@@ -12,7 +12,6 @@
     },
     "repositories": [
         {
-            "service": null,
             "repository": {
                 "alias": "github.com:opslevel/repo_from_name"
             }

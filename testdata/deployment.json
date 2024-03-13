@@ -26,7 +26,8 @@
                 "condition": true
             },
             "prop_string": "hello world",
-            "repo": "github.com:hashicorp/vault"
+            "repo": "github.com:flant/libjq-go",
+            "repository": "github.com:hashicorp/vault"
         },
         "creationTimestamp": "2023-07-19T18:04:03Z",
         "generation": 243,
