@@ -28,7 +28,7 @@ func NewJQTagsParser(cfg TagRegistrationConfig) *JQTagsParser {
 }
 
 func (p *JQTagsParser) parse(programs []*JQFieldParser, data string) []opslevel.TagInput {
-	output := make([]opslevel.TagInput, 0, len(programs))
+	output := make([]opslevel.TagInput, 0)
 	for _, program := range programs {
 		response, err := program.Run(data)
 		if err != nil {

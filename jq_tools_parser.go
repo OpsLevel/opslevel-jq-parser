@@ -23,7 +23,7 @@ func NewJQToolsParser(expressions []string) *JQToolsParser {
 }
 
 func (p *JQToolsParser) Run(data string) ([]opslevel.ToolCreateInput, error) {
-	output := make([]opslevel.ToolCreateInput, 0, len(p.programs))
+	output := make([]opslevel.ToolCreateInput, 0)
 	for _, program := range p.programs {
 		response, err := program.Run(data)
 		if err != nil {

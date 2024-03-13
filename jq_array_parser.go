@@ -24,7 +24,7 @@ func NewJQArrayParser(expressions []string) *JQArrayParser {
 }
 
 func (p *JQArrayParser) Run(data string) ([]string, error) {
-	output := make([]string, 0, len(p.programs))
+	output := make([]string, 0)
 	for _, program := range p.programs {
 		response, err := program.Run(data)
 		if err != nil {
