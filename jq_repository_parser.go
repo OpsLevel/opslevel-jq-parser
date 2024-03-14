@@ -37,7 +37,7 @@ func NewJQRepositoryParser(expressions []string) *JQRepositoryParser {
 }
 
 func (p *JQRepositoryParser) Run(data string) ([]opslevel.ServiceRepositoryCreateInput, error) {
-	output := make([]opslevel.ServiceRepositoryCreateInput, 0, len(p.programs))
+	output := []opslevel.ServiceRepositoryCreateInput{}
 	for _, program := range p.programs {
 		response, err := program.Run(data)
 		// log.Warn().Msgf("expression: %s\nresponse: %s", program.program.Program, response)
@@ -55,7 +55,9 @@ func (p *JQRepositoryParser) Run(data string) ([]opslevel.ServiceRepositoryCreat
 			var repos []RepositoryDTO
 			if err := json.Unmarshal([]byte(response), &repos); err == nil {
 				for _, repo := range repos {
-					output = append(output, repo.Convert())
+					if repo.Repo != "" {
+						output = append(output, repo.Convert())
+					}
 				}
 			} else {
 				// Try as []string
@@ -73,7 +75,9 @@ func (p *JQRepositoryParser) Run(data string) ([]opslevel.ServiceRepositoryCreat
 				log.Warn().Err(err).Msgf("unable to marshal repo expression: %s\n%s", program.program.Program, response)
 				continue
 			}
-			output = append(output, repo.Convert())
+			if repo.Repo != "" {
+				output = append(output, repo.Convert())
+			}
 		} else {
 			output = append(output, opslevel.ServiceRepositoryCreateInput{Repository: *opslevel.NewIdentifier(response)})
 		}
