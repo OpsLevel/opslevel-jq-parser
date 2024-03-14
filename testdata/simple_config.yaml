@@ -9,6 +9,9 @@ properties:
   prop_empty_object: .metadata.annotations.prop_empty_object
   prop_object: .metadata.annotations.prop_object
   prop_string: .metadata.annotations.prop_string
+repositories:
+  - '{"name": "Not a Valid Repo", "directory": ""}'
+  - '"github.com:opslevel/repo_from_name"'
 tags:
   assign:
     - '{"imported": "kubectl-opslevel"}'

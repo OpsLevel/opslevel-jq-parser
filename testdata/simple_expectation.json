@@ -10,7 +10,13 @@
         "prop_object": "{\"message\":\"hello world\",\"condition\":true}",
         "prop_string": "hello world"
     },
-    "repositories": [],
+    "repositories": [
+        {
+            "repository": {
+                "alias": "github.com:opslevel/repo_from_name"
+            }
+        }
+    ],
     "tagAssigns": [
         {
             "key": "app.kubernetes.io/instance",

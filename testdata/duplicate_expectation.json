@@ -13,7 +13,18 @@
     "properties": {},
     "repositories": [
         {
-            "service": null,
+            "repository": {
+                "alias": "github.com:opslevel/duplicate"
+            },
+            "baseDirectory": "",
+            "displayName": "Duplicate Repo"
+        },
+        {
+            "repository": {
+                "alias": "github.com:flant/libjq-go"
+            }
+        },
+        {
             "repository": {
                 "alias": "github.com:hashicorp/vault"
             },
@@ -21,7 +32,6 @@
             "displayName": "My Cool Repo"
         },
         {
-            "service": null,
             "repository": {
                 "alias": "gitlab.com:opslevel/terraform"
             },
