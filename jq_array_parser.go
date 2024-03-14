@@ -2,6 +2,7 @@ package opslevel_jq_parser
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	libjq_go "github.com/flant/libjq-go"
@@ -51,24 +52,22 @@ func (p *JQArrayParser) Run(data string) ([]string, error) {
 	return runJQUnique[string](output)
 }
 
-func runJQUnique[T any](inputArray []T) ([]T, error) {
-	prg, err := libjq_go.Jq().Program("unique").Precompile()
-	if err != nil {
-		return nil, err
+func runJQUnique[T any](inputArray []T, uniqueBy ...string) ([]T, error) {
+	if len(uniqueBy) == 0 {
+		uniqueBy = []string{"."}
 	}
+	expression := fmt.Sprintf("unique_by(%s)", strings.Join(uniqueBy, ","))
 	rawJSON, err := json.Marshal(inputArray)
 	if err != nil {
 		return nil, err
 	}
-
-	resultArray, err := prg.RunRaw(string(rawJSON))
+	resultArray, err := libjq_go.Jq().Program(expression).RunRaw(string(rawJSON))
 	if err != nil {
 		return nil, err
 	}
 	if resultArray == "null" {
 		return nil, nil
 	}
-
 	var uniqueArray []T
 	err = json.Unmarshal([]byte(resultArray), &uniqueArray)
 	if err != nil {

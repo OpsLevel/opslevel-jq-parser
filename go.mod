@@ -7,7 +7,6 @@ require (
 	github.com/opslevel/opslevel-go/v2024 v2024.2.26
 	github.com/rocktavious/autopilot/v2023 v2023.12.7
 	github.com/rs/zerolog v1.32.0
-	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225
 	gopkg.in/yaml.v3 v3.0.1
 )
 

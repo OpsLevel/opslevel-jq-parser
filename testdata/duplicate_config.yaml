@@ -11,6 +11,8 @@ repositories:
   - .metadata.annotations.repo
   - '.metadata.annotations | to_entries |  map(select(.key | startswith("opslevel.com/repo"))) | map({"name": .key | split(".")[2], "directory": .key | split(".")[3:] | join("/"), "repo": .value})'
   - '.metadata.annotations | to_entries |  map(select(.key | startswith("opslevel.com/repo"))) | map({"name": .key | split(".")[2], "directory": .key | split(".")[3:] | join("/"), "repo": .value})'
+  - '{"name": "Duplicate Repo", "directory": "", "repo": "github.com:opslevel/duplicate"}'
+  - '"github.com:opslevel/duplicate"'
 tags:
   assign:
     - '{"imported": "kubectl-opslevel"}'

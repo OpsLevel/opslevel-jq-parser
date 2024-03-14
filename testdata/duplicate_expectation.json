@@ -14,6 +14,13 @@
     "repositories": [
         {
             "repository": {
+                "alias": "github.com:opslevel/duplicate"
+            },
+            "baseDirectory": "",
+            "displayName": "Duplicate Repo"
+        },
+        {
+            "repository": {
                 "alias": "github.com:flant/libjq-go"
             }
         },
