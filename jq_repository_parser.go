@@ -37,7 +37,7 @@ func NewJQRepositoryParser(expressions []string) *JQRepositoryParser {
 }
 
 func (p *JQRepositoryParser) Run(data string) ([]opslevel.ServiceRepositoryCreateInput, error) {
-	output := []opslevel.ServiceRepositoryCreateInput{}
+	output := make([]opslevel.ServiceRepositoryCreateInput, 0)
 	for _, program := range p.programs {
 		response, err := program.Run(data)
 		// log.Warn().Msgf("expression: %s\nresponse: %s", program.program.Program, response)
