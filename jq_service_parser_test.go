@@ -41,6 +41,7 @@ func compAny[T any](a, b T) int {
 
 func sortSlices(service *opslevel_jq_parser.ServiceRegistration) {
 	slices.Sort(service.Aliases)
+	slices.SortFunc(service.Properties, compAny[opslevel.PropertyInput])
 	slices.SortFunc(service.Repositories, compAny[opslevel.ServiceRepositoryCreateInput])
 	slices.SortFunc(service.TagAssigns, compAny[opslevel.TagInput])
 	slices.SortFunc(service.TagCreates, compAny[opslevel.TagInput])
@@ -69,13 +70,12 @@ func TestJQServiceParser(t *testing.T) {
 
 			var expectedService opslevel_jq_parser.ServiceRegistration
 			err = json.Unmarshal([]byte(tc.expectedServiceReg), &expectedService)
+			autopilot.Ok(t, err)
 
 			// order of the slices does not matter - JSON marshal will output struct keys in order defined in the struct
 			// so before comparing, sort the slices
 			sortSlices(service)
 			sortSlices(&expectedService)
-
-			autopilot.Ok(t, err)
 			autopilot.Equals(t, expectedService, *service)
 		})
 	}

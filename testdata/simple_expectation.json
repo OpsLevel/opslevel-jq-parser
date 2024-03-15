@@ -4,19 +4,37 @@
     ],
     "name": "web",
     "owner": "self-hosted",
-    "properties": {
-        "prop_bool": "true",
-        "prop_empty_object": "{}",
-        "prop_object": "{\"message\":\"hello world\",\"condition\":true}",
-        "prop_string": "hello world"
-    },
-    "repositories": [
+    "properties": [
         {
-            "repository": {
-                "alias": "github.com:opslevel/repo_from_name"
-            }
+            "definition": {
+                "alias": "prop_bool"
+            },
+            "value": "true"
+        },
+        {
+            "definition": {
+                "alias": "prop_empty_object"
+            },
+            "value": "{}"
+        },
+        {
+            "definition": {
+                "alias": "prop_object"
+            },
+            "value": "{\"message\":\"hello world\",\"condition\":true}"
+        },
+        {
+            "definition": {
+                "alias": "prop_string"
+            },
+            "value": "hello world"
         }
     ],
+    "repositories": [{
+        "repository": {
+            "alias": "github.com:opslevel/repo_from_name"
+        }
+    }],
     "tagAssigns": [
         {
             "key": "app.kubernetes.io/instance",

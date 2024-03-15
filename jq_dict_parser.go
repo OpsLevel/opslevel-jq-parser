@@ -3,6 +3,8 @@ package opslevel_jq_parser
 import (
 	"fmt"
 
+	"github.com/opslevel/opslevel-go/v2024"
+
 	libjq_go "github.com/flant/libjq-go"
 	"github.com/rs/zerolog/log"
 )
@@ -27,8 +29,8 @@ func NewJQDictParser(dict map[string]string) map[string]JQFieldParser {
 	return output
 }
 
-func (p JQDictParser) Run(data string) (map[string]string, error) {
-	output := make(map[string]string)
+func (p JQDictParser) Run(data string) ([]opslevel.PropertyInput, error) {
+	output := make([]opslevel.PropertyInput, 0)
 	for key, expression := range p {
 		jqRes, err := expression.Run(data)
 		if err != nil {
@@ -38,7 +40,11 @@ func (p JQDictParser) Run(data string) (map[string]string, error) {
 		if jqRes == "" {
 			continue
 		}
-		output[key] = jqRes
+		propertyInput := opslevel.PropertyInput{
+			Definition: *opslevel.NewIdentifier(key),
+			Value:      opslevel.JsonString(jqRes),
+		}
+		output = append(output, propertyInput)
 	}
 	return output, nil
 }
