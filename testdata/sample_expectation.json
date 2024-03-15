@@ -10,7 +10,7 @@
     "name": "web",
     "owner": "velero",
     "product": "jklabs",
-    "properties": {},
+    "properties": [],
     "repositories": [
         {
             "repository": {

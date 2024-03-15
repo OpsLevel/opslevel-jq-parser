@@ -1,0 +1,3 @@
+kind: Refactor
+body: Properties are now returned as []opslevel.PropertyInput
+time: 2024-03-15T08:29:18.993305-04:00
