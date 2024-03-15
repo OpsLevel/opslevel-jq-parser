@@ -58,8 +58,8 @@ github.com/mitchellh/reflectwalk v1.0.0 h1:9D+8oIskB4VJBN5SFlmc27fSlIBZaov1Wpk/I
 github.com/mitchellh/reflectwalk v1.0.0/go.mod h1:mSTlrgnPZtwu0c4WaC2kGObEpuNDbx0jmZXqmk4esnw=
 github.com/opslevel/moredefaults v0.0.0-20240112142637-078c8ff8ba9c h1:m4sNHcfkE02xZy1oxF2QVGfhHulamxw9UlzRM7c45QQ=
 github.com/opslevel/moredefaults v0.0.0-20240112142637-078c8ff8ba9c/go.mod h1:g2GSXVP6LO+5+AIsnMRPN+BeV86OXuFRTX7HXCDtYeI=
-github.com/opslevel/opslevel-go/v2024 v2024.2.26 h1:C3dNZE2gu5u62UT5pUN/cP3H8/RqLEqrFwil5+q6g74=
-github.com/opslevel/opslevel-go/v2024 v2024.2.26/go.mod h1:0+Kd6Wz8g7fOkcYOdJXB/WGSIqJjVgUm8vAgZG1qVkQ=
+github.com/opslevel/opslevel-go/v2024 v2024.3.15 h1:6pNsCUz1nLnur9oC/GWpwI9N9tgsCFQHdAyUUxa4Mo0=
+github.com/opslevel/opslevel-go/v2024 v2024.3.15/go.mod h1:Z7+bF+4tqxrll3EOacPOOBGa5+hAq4+Ot0jmG97jm8c=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
