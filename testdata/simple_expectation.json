@@ -30,11 +30,13 @@
             "value": "hello world"
         }
     ],
-    "repositories": [{
-        "repository": {
-            "alias": "github.com:opslevel/repo_from_name"
+    "repositories": [
+        {
+            "repository": {
+                "alias": "github.com:opslevel/repo_from_name"
+            }
         }
-    }],
+    ],
     "tagAssigns": [
         {
             "key": "app.kubernetes.io/instance",
