@@ -38,6 +38,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release delete ${{ steps.version.outputs.RELEASE_VERSION }} || true
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify release has latest OpsLevel dependencies
+        run: task has-latest-opslevel-go
       - name: Set Package Version
         run: |
           cat << EOF > version.go
