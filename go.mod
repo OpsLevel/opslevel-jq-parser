@@ -1,6 +1,6 @@
 module github.com/opslevel/opslevel-jq-parser/v2024
 
-go 1.22
+go 1.23
 
 require (
 	github.com/flant/libjq-go v1.6.2
