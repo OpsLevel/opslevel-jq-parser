@@ -4,7 +4,7 @@ go 1.23
 
 require (
 	github.com/flant/libjq-go v1.6.2
-	github.com/opslevel/opslevel-go/v2024 v2024.9.3
+	github.com/opslevel/opslevel-go/v2024 v2024.9.18
 	github.com/rocktavious/autopilot/v2023 v2023.12.7
 	github.com/rs/zerolog v1.33.0
 	gopkg.in/yaml.v3 v3.0.1
