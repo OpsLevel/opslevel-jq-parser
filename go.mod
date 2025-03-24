@@ -6,7 +6,7 @@ require (
 	github.com/flant/libjq-go v1.6.2
 	github.com/opslevel/opslevel-go/v2024 v2024.12.24
 	github.com/rocktavious/autopilot/v2023 v2023.12.7
-	github.com/rs/zerolog v1.33.0
+	github.com/rs/zerolog v1.34.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
